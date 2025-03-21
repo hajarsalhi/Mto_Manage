@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
@@ -32,8 +31,7 @@ export default function CompensationValidation() {
   
   const { toast } = useToast();
   
-  // Simulate data fetch
-  useState(() => {
+  useEffect(() => {
     // Mock data
     const mockData: CompensationFile[] = [
       {
@@ -326,7 +324,6 @@ export default function CompensationValidation() {
         </div>
       </main>
       
-      {/* Decorative background elements */}
       <div className="fixed top-0 right-0 w-1/3 h-1/3 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
       <div className="fixed bottom-0 left-0 w-1/4 h-1/4 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
     </div>
