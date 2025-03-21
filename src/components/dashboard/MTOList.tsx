@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
-import { StatusIndicator } from '../ui-custom/StatusIndicator';
+import { StatusIndicator, ValueChange } from '../ui-custom/StatusIndicator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Plus } from 'lucide-react';
+import { ArrowRight, Plus, TrendingUp, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Progress } from '@/components/ui/progress';
 
 interface MTOData {
   id: string;
@@ -14,8 +15,11 @@ interface MTOData {
   currency: string;
   balance: number;
   riskValue: number;
+  maxRiskValue: number;
   status: 'positive' | 'negative' | 'warning' | 'neutral';
   decote: number;
+  change: number;
+  isBlocked: boolean;
 }
 
 export function MTOList() {
@@ -36,8 +40,11 @@ export function MTOList() {
         currency: "USD",
         balance: 125780.45,
         riskValue: 50000,
+        maxRiskValue: 80000,
         status: 'positive',
-        decote: 0.015
+        decote: 0.015,
+        change: 2.4,
+        isBlocked: false
       },
       {
         id: "mto2",
@@ -45,8 +52,11 @@ export function MTOList() {
         currency: "EUR",
         balance: 87650.20,
         riskValue: 35000,
+        maxRiskValue: 50000,
         status: 'positive',
-        decote: 0.018
+        decote: 0.018,
+        change: 1.8,
+        isBlocked: false
       },
       {
         id: "mto3",
@@ -54,8 +64,11 @@ export function MTOList() {
         currency: "EUR",
         balance: -1240.75,
         riskValue: 20000,
+        maxRiskValue: 30000,
         status: 'negative',
-        decote: 0.02
+        decote: 0.02,
+        change: -3.2,
+        isBlocked: true
       },
       {
         id: "mto4",
@@ -63,8 +76,11 @@ export function MTOList() {
         currency: "GBP",
         balance: 45692.30,
         riskValue: 30000,
+        maxRiskValue: 40000,
         status: 'warning',
-        decote: 0.025
+        decote: 0.025,
+        change: 0.5,
+        isBlocked: false
       }
     ];
     
@@ -86,57 +102,70 @@ export function MTOList() {
   
   const handleAddMTO = () => {
     toast({
-      title: "Feature coming soon",
-      description: "Adding new MTOs will be available in the next update.",
+      title: "Fonctionnalité à venir",
+      description: "L'ajout de nouveaux MTO sera disponible dans la prochaine mise à jour.",
       duration: 3000,
     });
   };
 
+  const toggleMTOBlock = (mtoId: string) => {
+    setMtoList(prevList => 
+      prevList.map(mto => 
+        mto.id === mtoId ? { ...mto, isBlocked: !mto.isBlocked } : mto
+      )
+    );
+    
+    const mto = mtoList.find(m => m.id === mtoId);
+    if (mto) {
+      toast({
+        title: mto.isBlocked ? `${mto.name} débloqué` : `${mto.name} bloqué`,
+        description: mto.isBlocked 
+          ? "Les opérations sont maintenant autorisées" 
+          : "Les opérations sont temporairement suspendues",
+        duration: 3000,
+      });
+    }
+  };
+
   return (
-    <Card variant="glass" className="h-full">
-      <CardHeader className="flex justify-between items-center">
-        <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-          MTO Partners
-        </CardTitle>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {isLoading ? (
+        Array(4).fill(0).map((_, i) => (
+          <div key={i} className="animate-pulse h-80">
+            <div className="h-full bg-secondary rounded-lg w-full"></div>
+          </div>
+        ))
+      ) : (
+        mtoList.map((mto) => (
+          <MTOCard 
+            key={mto.id} 
+            mto={mto} 
+            onClick={() => navigate('/mto-details')}
+            onToggleBlock={() => toggleMTOBlock(mto.id)}
+          />
+        ))
+      )}
+      <div className="flex items-center justify-center h-80 border-2 border-dashed border-border rounded-lg hover:border-primary/50 transition-colors cursor-pointer">
         <Button 
-          variant="outline" 
-          size="sm"
-          className="h-8 text-xs gap-1"
+          variant="ghost" 
+          className="gap-2 text-muted-foreground h-auto py-8 px-6 flex-col"
           onClick={handleAddMTO}
         >
-          <Plus className="h-3.5 w-3.5" />
-          <span>Add MTO</span>
+          <Plus className="h-12 w-12" />
+          <span className="text-lg font-medium mt-2">Ajouter un partenaire MTO</span>
         </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {isLoading ? (
-            Array(4).fill(0).map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-16 bg-secondary rounded-lg w-full"></div>
-              </div>
-            ))
-          ) : (
-            mtoList.map((mto) => (
-              <MTOItem 
-                key={mto.id} 
-                mto={mto} 
-                onClick={() => navigate('/mto-details')}
-              />
-            ))
-          )}
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
-interface MTOItemProps {
+interface MTOCardProps {
   mto: MTOData;
   onClick: () => void;
+  onToggleBlock: () => void;
 }
 
-function MTOItem({ mto, onClick }: MTOItemProps) {
+function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -145,31 +174,128 @@ function MTOItem({ mto, onClick }: MTOItemProps) {
     }).format(amount);
   };
 
+  const calculatePercentage = () => {
+    return (mto.riskValue / mto.maxRiskValue) * 100;
+  };
+
+  const getStatusColor = () => {
+    const percentage = calculatePercentage();
+    if (percentage < 30) return "bg-finance-negative";
+    if (percentage < 60) return "bg-finance-warning";
+    return "bg-finance-positive";
+  };
+
   return (
-    <div 
-      className="p-4 rounded-lg border border-border bg-card/50 hover:bg-card/80 transition-colors cursor-pointer group"
-      onClick={onClick}
+    <Card 
+      variant="glass" 
+      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : ''}`}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <StatusIndicator status={mto.status} />
-          <div>
-            <h3 className="font-medium text-sm">{mto.name}</h3>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">
-                {formatCurrency(mto.balance, mto.currency)}
-              </span>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="flex items-center gap-2">
+          <StatusIndicator 
+            status={mto.status} 
+            pulsate={mto.isBlocked}
+          />
+          <CardTitle className="text-lg font-semibold">
+            {mto.name}
+          </CardTitle>
+        </div>
+        <Badge 
+          variant={mto.isBlocked ? "destructive" : "outline"} 
+          className="font-normal"
+        >
+          {mto.isBlocked ? 'Bloqué' : 'Actif'}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <div 
+          className="pt-4 space-y-6 cursor-pointer"
+          onClick={onClick}
+        >
+          {/* Current Balance */}
+          <div className="space-y-2">
+            <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
+              Solde Actuel
+            </h3>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-2xl font-bold">
+                  {formatCurrency(mto.balance, mto.currency)}
+                </p>
+                <ValueChange 
+                  value={mto.change} 
+                  percentageChange 
+                  size="sm"
+                />
+              </div>
               <Badge 
                 variant="outline" 
-                className="text-[10px] h-4 px-1.5 font-normal border-muted text-muted-foreground"
+                className="text-xs font-normal border-muted text-muted-foreground"
               >
                 {mto.decote * 100}% décote
               </Badge>
             </div>
           </div>
+
+          {/* Risk Value */}
+          <div className="space-y-2">
+            <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
+              Valeur de Risque
+            </h3>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <p className="text-xl font-semibold">
+                  {formatCurrency(mto.riskValue, mto.currency)}
+                </p>
+                <span className="text-sm text-muted-foreground">
+                  Max: {formatCurrency(mto.maxRiskValue, mto.currency)}
+                </span>
+              </div>
+              
+              <Progress
+                value={calculatePercentage()}
+                className="h-2"
+                indicatorClassName={getStatusColor()}
+              />
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{calculatePercentage().toFixed(0)}% utilisé</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Message */}
+          <div className={`p-3 rounded-lg border text-xs flex items-start gap-2 ${
+            mto.isBlocked ? 
+              "bg-finance-negative/10 border-finance-negative/20 text-finance-negative" : 
+              "bg-finance-positive/10 border-finance-positive/20 text-finance-positive"
+          }`}>
+            {mto.isBlocked ? (
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            ) : (
+              <TrendingUp className="h-4 w-4 flex-shrink-0" />
+            )}
+            <p>
+              {mto.isBlocked 
+                ? "Les opérations sont bloquées. Ajustez la valeur de risque pour reprendre." 
+                : "La valeur de risque est dans les limites acceptables."}
+            </p>
+          </div>
         </div>
-        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-      </div>
-    </div>
+
+        <div className="pt-4 flex justify-end">
+          <Button
+            variant={mto.isBlocked ? "outline" : "destructive"}
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleBlock();
+            }}
+          >
+            {mto.isBlocked ? "Débloquer" : "Bloquer"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

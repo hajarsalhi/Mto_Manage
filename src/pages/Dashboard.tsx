@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { BalanceOverview } from '@/components/dashboard/BalanceOverview';
-import { RiskValueCard } from '@/components/dashboard/RiskValueCard';
 import { MTOList } from '@/components/dashboard/MTOList';
 import { FXRateCard } from '@/components/dashboard/FXRateCard';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
@@ -73,26 +71,18 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div className="lg:col-span-2">
-              <BalanceOverview />
-            </div>
-            <div>
-              <RiskValueCard />
-            </div>
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-4">Partenaires MTO</h2>
+            <MTOList />
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2">
-              <MTOList />
-            </div>
-            <div>
               <FXRateCard />
             </div>
-          </div>
-          
-          <div className="w-full">
-            <RecentActivity />
+            <div>
+              <RecentActivity />
+            </div>
           </div>
         </div>
       </main>
