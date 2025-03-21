@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Bell, Sun, Moon, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -12,6 +13,7 @@ interface HeaderProps {
 export function Header({ toggleSidebar }: HeaderProps) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const isMobile = useIsMobile();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
         "bg-background/80 backdrop-blur-md",
         isScrolled && "shadow-sm border-b border-border"
       )}
-      style={{ left: '280px' }}
+      style={{ left: isMobile ? '0' : '280px' }}
     >
       <div className="flex items-center gap-4">
         <Button 

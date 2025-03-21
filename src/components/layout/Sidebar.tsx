@@ -5,14 +5,15 @@ import {
   LayoutDashboard, 
   PieChart, 
   RefreshCw,
-  Wallet, 
   Bell, 
   Settings,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  Upload
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SidebarLinkProps {
   to: string;
@@ -52,6 +53,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     setIsMounted(true);
@@ -90,7 +92,7 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             </div>
             {!isCollapsed && (
               <span className="font-semibold tracking-tight">
-                MTO Balance
+                Balance System
               </span>
             )}
           </div>
@@ -129,12 +131,6 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               isCollapsed={isCollapsed} 
             />
             <SidebarLink 
-              to="/mto-details" 
-              icon={Wallet} 
-              label="MTO Details" 
-              isCollapsed={isCollapsed} 
-            />
-            <SidebarLink 
               to="/risk-management" 
               icon={PieChart} 
               label="Risk Management" 
@@ -144,6 +140,12 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               to="/balance-corrections" 
               icon={RefreshCw} 
               label="Balance Corrections" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarLink 
+              to="/compensation-upload" 
+              icon={Upload} 
+              label="Upload Compensation" 
               isCollapsed={isCollapsed} 
             />
             <SidebarLink 
