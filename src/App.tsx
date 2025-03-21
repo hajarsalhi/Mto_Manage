@@ -10,6 +10,10 @@ import BalanceCorrections from "./pages/BalanceCorrections";
 import RiskManagement from "./pages/RiskManagement";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
+import CompensationUpload from "./pages/CompensationUpload";
+import CompensationValidation from "./pages/CompensationValidation";
+import CompensationHistory from "./pages/CompensationHistory";
+import ActivityHistory from "./pages/ActivityHistory";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +29,10 @@ const App = () => (
           <Route path="/balance-corrections" element={<BalanceCorrections />} />
           <Route path="/risk-management" element={<RiskManagement />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/compensation-upload" element={<CompensationUpload />} />
+          <Route path="/compensation-validation" element={<CompensationValidation />} />
+          <Route path="/compensation-history" element={<CompensationHistory />} />
+          <Route path="/activity-history" element={<ActivityHistory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

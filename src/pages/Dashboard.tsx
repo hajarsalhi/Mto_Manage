@@ -6,9 +6,11 @@ import { BalanceOverview } from '@/components/dashboard/BalanceOverview';
 import { RiskValueCard } from '@/components/dashboard/RiskValueCard';
 import { MTOList } from '@/components/dashboard/MTOList';
 import { FXRateCard } from '@/components/dashboard/FXRateCard';
+import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -23,8 +25,8 @@ export default function Dashboard() {
       setIsLoading(false);
       
       toast({
-        title: "Dashboard refreshed",
-        description: "All data has been updated to the latest values.",
+        title: "Tableau de bord actualisé",
+        description: "Toutes les données ont été mises à jour aux dernières valeurs.",
         duration: 3000,
       });
     }, 1500);
@@ -37,26 +39,38 @@ export default function Dashboard() {
       
       <main 
         className="pt-16 transition-all duration-300"
-        style={{ marginLeft: '280px' }}
+        style={{ marginLeft: isSidebarOpen ? '280px' : '80px' }}
       >
         <div className="p-6 md:p-10 max-w-7xl animate-scale-in">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="heading-xl">Dashboard</h1>
+              <h1 className="heading-xl">Tableau de bord</h1>
               <p className="text-muted-foreground mt-1">
-                Overview of MTO balances and operations
+                Aperçu des soldes et opérations MTO
               </p>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="gap-2"
-              onClick={handleRefresh}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="gap-2"
+                onClick={handleRefresh}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span>Actualiser</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="gap-2"
+                as={Link}
+                to="/activity-history"
+              >
+                <History className="h-4 w-4" />
+                <span>Historique</span>
+              </Button>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -68,13 +82,17 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2">
               <MTOList />
             </div>
             <div>
               <FXRateCard />
             </div>
+          </div>
+          
+          <div className="w-full">
+            <RecentActivity />
           </div>
         </div>
       </main>
