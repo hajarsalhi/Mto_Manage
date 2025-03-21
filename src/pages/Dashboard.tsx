@@ -62,17 +62,17 @@ export default function Dashboard() {
                 variant="outline" 
                 size="sm"
                 className="gap-2"
-                as={Link}
-                to="/activity-history"
+                asChild
               >
-                <History className="h-4 w-4" />
-                <span>Historique</span>
+                <Link to="/activity-history">
+                  <History className="h-4 w-4" />
+                  <span>Historique</span>
+                </Link>
               </Button>
             </div>
           </div>
           
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Partenaires MTO</h2>
             <MTOList />
           </div>
           

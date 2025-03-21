@@ -4,10 +4,20 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '../ui-custom/StatusIndicator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Plus, TrendingUp, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Plus, TrendingUp, AlertTriangle, Search, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface MTOData {
   id: string;
@@ -24,73 +34,50 @@ interface MTOData {
 
 export function MTOList() {
   const [mtoList, setMtoList] = useState<MTOData[]>([]);
+  const [filteredList, setFilteredList] = useState<MTOData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Simulate data fetch
+  // Simulate data fetch with more partners
   useEffect(() => {
     setIsLoading(true);
     
-    // Mock data
-    const mockData: MTOData[] = [
-      {
-        id: "mto1",
-        name: "Western Union",
-        currency: "USD",
-        balance: 125780.45,
-        riskValue: 50000,
-        maxRiskValue: 80000,
-        status: 'positive',
-        decote: 0.015,
-        change: 2.4,
-        isBlocked: false
-      },
-      {
-        id: "mto2",
-        name: "MoneyGram",
-        currency: "EUR",
-        balance: 87650.20,
-        riskValue: 35000,
-        maxRiskValue: 50000,
-        status: 'positive',
-        decote: 0.018,
-        change: 1.8,
-        isBlocked: false
-      },
-      {
-        id: "mto3",
-        name: "Ria Money Transfer",
-        currency: "EUR",
-        balance: -1240.75,
-        riskValue: 20000,
-        maxRiskValue: 30000,
-        status: 'negative',
-        decote: 0.02,
-        change: -3.2,
-        isBlocked: true
-      },
-      {
-        id: "mto4",
-        name: "WorldRemit",
-        currency: "GBP",
-        balance: 45692.30,
-        riskValue: 30000,
-        maxRiskValue: 40000,
-        status: 'warning',
-        decote: 0.025,
-        change: 0.5,
-        isBlocked: false
-      }
-    ];
+    // Generate 40+ partners for demo
+    const mockData: MTOData[] = Array.from({ length: 45 }, (_, index) => ({
+      id: `mto${index + 1}`,
+      name: `Partner MTO ${index + 1}`,
+      currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
+      balance: Math.random() * 200000 - 50000,
+      riskValue: Math.random() * 60000,
+      maxRiskValue: 80000,
+      status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
+      decote: 0.015 + Math.random() * 0.02,
+      change: Math.random() * 10 - 5,
+      isBlocked: Math.random() > 0.8
+    }));
     
     const timer = setTimeout(() => {
       setMtoList(mockData);
+      setFilteredList(mockData);
       setIsLoading(false);
     }, 2000);
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Filter and search logic
+  useEffect(() => {
+    const filtered = mtoList.filter(mto =>
+      mto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mto.currency.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredList(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, mtoList]);
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -99,7 +86,7 @@ export function MTOList() {
       minimumFractionDigits: 2
     }).format(amount);
   };
-  
+
   const handleAddMTO = () => {
     toast({
       title: "Fonctionnalité à venir",
@@ -127,34 +114,109 @@ export function MTOList() {
     }
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+  const currentItems = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {isLoading ? (
-        Array(4).fill(0).map((_, i) => (
-          <div key={i} className="animate-pulse h-80">
-            <div className="h-full bg-secondary rounded-lg w-full"></div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <h2 className="text-xl font-semibold">Partenaires MTO</h2>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none sm:min-w-[300px]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher un partenaire..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        ))
-      ) : (
-        mtoList.map((mto) => (
-          <MTOCard 
-            key={mto.id} 
-            mto={mto} 
-            onClick={() => navigate('/mto-details')}
-            onToggleBlock={() => toggleMTOBlock(mto.id)}
-          />
-        ))
-      )}
-      <div className="flex items-center justify-center h-80 border-2 border-dashed border-border rounded-lg hover:border-primary/50 transition-colors cursor-pointer">
-        <Button 
-          variant="ghost" 
-          className="gap-2 text-muted-foreground h-auto py-8 px-6 flex-col"
-          onClick={handleAddMTO}
-        >
-          <Plus className="h-12 w-12" />
-          <span className="text-lg font-medium mt-2">Ajouter un partenaire MTO</span>
-        </Button>
+          <Button variant="outline" size="icon">
+            <SlidersHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {isLoading ? (
+          Array(8).fill(0).map((_, i) => (
+            <div key={i} className="animate-pulse h-[280px]">
+              <div className="h-full bg-secondary rounded-lg w-full"></div>
+            </div>
+          ))
+        ) : (
+          <>
+            {currentItems.map((mto) => (
+              <MTOCard 
+                key={mto.id} 
+                mto={mto} 
+                onClick={() => navigate('/mto-details')}
+                onToggleBlock={() => toggleMTOBlock(mto.id)}
+              />
+            ))}
+            <div className="flex items-center justify-center h-[280px] border-2 border-dashed border-border rounded-lg hover:border-primary/50 transition-colors cursor-pointer">
+              <Button 
+                variant="ghost" 
+                className="gap-2 text-muted-foreground h-auto py-8 px-6 flex-col"
+                onClick={handleAddMTO}
+              >
+                <Plus className="h-12 w-12" />
+                <span className="text-lg font-medium mt-2">Ajouter un partenaire MTO</span>
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {!isLoading && filteredList.length > itemsPerPage && (
+        <Pagination className="mt-6">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(page => 
+                page === 1 || 
+                page === totalPages || 
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              )
+              .map((page, index, array) => {
+                if (index > 0 && array[index - 1] !== page - 1) {
+                  return (
+                    <PaginationItem key={`ellipsis-${page}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+                return (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={currentPage === page}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
