@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -142,33 +141,21 @@ export default function MTODetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
-                    <div className="grid grid-cols-6 p-4 text-sm font-medium border-b">
+                    <div className="grid grid-cols-4 p-4 text-sm font-medium border-b">
                       <div>Date</div>
                       <div>Ref</div>
-                      <div>Type</div>
                       <div className="text-right">Amount</div>
                       <div className="text-right">FX Rate</div>
-                      <div className="text-right">Status</div>
                     </div>
                     
                     {Array(5).fill(0).map((_, i) => (
-                      <div key={i} className="grid grid-cols-6 p-4 text-sm border-b last:border-b-0">
+                      <div key={i} className="grid grid-cols-4 p-4 text-sm border-b last:border-b-0">
                         <div className="text-muted-foreground">15/04/2023</div>
                         <div>WU{100000 + i}</div>
-                        <div>
-                          <Badge variant="outline" className="font-normal">
-                            {i % 2 === 0 ? 'Send' : 'Receive'}
-                          </Badge>
-                        </div>
                         <div className={`text-right ${i % 2 === 0 ? 'text-finance-negative' : 'text-finance-positive'}`}>
                           {i % 2 === 0 ? '-' : '+'}{formatCurrency(1000 + i * 500, 'USD')}
                         </div>
                         <div className="text-right text-muted-foreground">10.701</div>
-                        <div className="text-right">
-                          <Badge variant="outline" className={`font-normal ${i === 1 ? 'border-finance-warning text-finance-warning' : 'border-finance-positive text-finance-positive'}`}>
-                            {i === 1 ? 'Pending' : 'Completed'}
-                          </Badge>
-                        </div>
                       </div>
                     ))}
                   </div>
@@ -325,7 +312,6 @@ export default function MTODetails() {
         </div>
       </main>
       
-      {/* Decorative background elements */}
       <div className="fixed top-0 right-0 w-1/3 h-1/3 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
       <div className="fixed bottom-0 left-0 w-1/4 h-1/4 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
     </div>
