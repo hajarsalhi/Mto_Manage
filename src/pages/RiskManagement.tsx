@@ -15,9 +15,16 @@ import {
 } from "@/components/ui/select";
 import { Progress } from '@/components/ui/progress';
 import { StatusIndicator } from '@/components/ui-custom/StatusIndicator';
-import { AlertTriangle, ArrowRight, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowRight, CalendarIcon, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function RiskManagement() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -25,6 +32,8 @@ export default function RiskManagement() {
   const [riskValue, setRiskValue] = useState(50000);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const { toast } = useToast();
 
   const mtoData = {
@@ -98,6 +107,16 @@ export default function RiskManagement() {
       });
       return;
     }
+
+    if (!startDate) {
+      toast({
+        title: "Error",
+        description: "Please select a start date for the risk value period.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
     
     setIsAdjusting(true);
     
@@ -109,7 +128,7 @@ export default function RiskManagement() {
       
       toast({
         title: "Risk value updated",
-        description: `Risk value for ${mto.name} has been updated to ${riskValue} ${mto.currency}.`,
+        description: `Risk value for ${mto.name} has been updated to ${riskValue} ${mto.currency} from ${startDate ? format(startDate, 'PPP') : 'N/A'} to ${endDate ? format(endDate, 'PPP') : 'indefinitely'}.`,
         duration: 3000,
       });
       
@@ -273,6 +292,70 @@ export default function RiskManagement() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="form-group">
+                      <Label htmlFor="startDate">Start Date</Label>
+                      <div className="mt-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              id="startDate"
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !startDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {startDate ? format(startDate, "PPP") : <span>Select start date</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={startDate}
+                              onSelect={setStartDate}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <Label htmlFor="endDate">End Date (Optional)</Label>
+                      <div className="mt-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              id="endDate"
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !endDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {endDate ? format(endDate, "PPP") : <span>Select end date</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={endDate}
+                              onSelect={setEndDate}
+                              disabled={(date) => date < (startDate || new Date())}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Leave blank for indefinite risk value application
+                        </p>
+                      </div>
+                    </div>
                     
                     <div className="space-y-1">
                       <Label className="text-sm">Risk Value Range</Label>
@@ -342,7 +425,7 @@ export default function RiskManagement() {
                 </Button>
                 <Button 
                   type="submit" 
-                  disabled={isAdjusting || !selectedMto}
+                  disabled={isAdjusting || !selectedMto || !startDate}
                   className={cn(
                     "bg-primary/90 hover:bg-primary text-primary-foreground",
                     isBlocked && "bg-finance-positive hover:bg-finance-positive/90"
