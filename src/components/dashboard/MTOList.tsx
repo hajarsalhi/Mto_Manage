@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -42,11 +41,9 @@ export function MTOList() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Simulate data fetch with more partners
   useEffect(() => {
     setIsLoading(true);
     
-    // Generate 40+ partners for demo
     const mockData: MTOData[] = Array.from({ length: 45 }, (_, index) => ({
       id: `mto${index + 1}`,
       name: `Partner MTO ${index + 1}`,
@@ -69,7 +66,6 @@ export function MTOList() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Filter and search logic
   useEffect(() => {
     const filtered = mtoList.filter(mto =>
       mto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,26 +91,16 @@ export function MTOList() {
     });
   };
 
-  const toggleMTOBlock = (mtoId: string) => {
-    setMtoList(prevList => 
-      prevList.map(mto => 
-        mto.id === mtoId ? { ...mto, isBlocked: !mto.isBlocked } : mto
-      )
-    );
+  const handleRiskManagement = (mtoId: string) => {
+    navigate(`/risk-management?mtoId=${mtoId}`);
     
-    const mto = mtoList.find(m => m.id === mtoId);
-    if (mto) {
-      toast({
-        title: mto.isBlocked ? `${mto.name} débloqué` : `${mto.name} bloqué`,
-        description: mto.isBlocked 
-          ? "Les opérations sont maintenant autorisées" 
-          : "Les opérations sont temporairement suspendues",
-        duration: 3000,
-      });
-    }
+    toast({
+      title: "Gestion des risques",
+      description: "Ajustez la valeur de risque pour bloquer ou débloquer ce partenaire.",
+      duration: 3000,
+    });
   };
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const currentItems = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
@@ -155,7 +141,7 @@ export function MTOList() {
                 key={mto.id} 
                 mto={mto} 
                 onClick={() => navigate('/mto-details')}
-                onToggleBlock={() => toggleMTOBlock(mto.id)}
+                onToggleBlock={() => handleRiskManagement(mto.id)}
               />
             ))}
             <div className="flex items-center justify-center h-[280px] border-2 border-dashed border-border rounded-lg hover:border-primary/50 transition-colors cursor-pointer">
@@ -354,7 +340,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
               onToggleBlock();
             }}
           >
-            {mto.isBlocked ? "Débloquer" : "Bloquer"}
+            {mto.isBlocked ? "Gérer le risque" : "Gérer le risque"}
           </Button>
         </div>
       </CardContent>
