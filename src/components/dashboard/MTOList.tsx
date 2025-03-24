@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -260,10 +261,10 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
           className="pt-4 space-y-6 cursor-pointer"
           onClick={onClick}
         >
-          {/* Current Balance */}
+          {/* Real Time Balance (formerly Current Balance) */}
           <div className="space-y-2">
             <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
-              Solde Actuel
+              Real Time Balance
             </h3>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -285,10 +286,10 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             </div>
           </div>
 
-          {/* Risk Value */}
+          {/* Risk Value (formerly Valeur de Risque) */}
           <div className="space-y-2">
             <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
-              Valeur de Risque
+              Risk Value
             </h3>
             <div className="space-y-1">
               <div className="flex items-center justify-between">
