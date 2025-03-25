@@ -151,11 +151,7 @@ export function RiskValueCard() {
                   <TrendingUp className="h-5 w-5 flex-shrink-0" />
                 )}
                 <div>
-                  {isBlocked ? (
-                    <p>Prochain Risk Value: Aucun risk value futur configuré</p>
-                  ) : (
-                    <p>Prochain Risk Value: Aucun risk value futur configuré</p>
-                  )}
+                  <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                 </div>
               </div>
             </>

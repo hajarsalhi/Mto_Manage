@@ -417,10 +417,10 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             )}
             <p>
               {isBlocked 
-                ? "Les opérations sont bloquées car la valeur maximale de risque (Balance + Risk Value) est inférieure ou égale à zéro." 
+                ? "Prochain Risk Value: Aucun risk value futur configuré" 
                 : mto.isCritical
                 ? "Le partenaire est en état critique avec une balance ou une risk value limitée."
-                : "La valeur de risque est dans les limites acceptables."}
+                : "Prochain Risk Value: Aucun risk value futur configuré"}
             </p>
           </div>
         </div>

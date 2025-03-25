@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
@@ -211,20 +210,12 @@ export function RiskValueForm({
                       <TrendingUp className="h-5 w-5 flex-shrink-0" />
                     )}
                     <div>
-                      {isBlocked ? (
-                        <p>Prochain Risk Value: Aucun risk value futur configuré</p>
-                      ) : (
-                        <p>Prochain Risk Value: Aucun risk value futur configuré</p>
-                      )}
+                      <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                     </div>
                   </div>
                   
                   <div className="mt-6 text-sm text-muted-foreground">
-                    {isBlocked ? (
-                      <p>Prochain Risk Value: Aucun risk value futur configuré</p>
-                    ) : (
-                      <p>Maintain adequate risk value to prevent operations from being blocked. The system will automatically block operations if the maximum risk value (Balance + Risk Value) is less than or equal to zero.</p>
-                    )}
+                    <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                   </div>
                 </div>
               </div>
