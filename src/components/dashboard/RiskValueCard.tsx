@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { StatusIndicator } from '../ui-custom/StatusIndicator';
-import { AlertTriangle, TrendingUp } from 'lucide-react';
+import { AlertTriangle, Calendar, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
+import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 interface RiskValueData {
   currentValue: number;
@@ -13,6 +15,10 @@ interface RiskValueData {
   threshold: number;
   currency: string;
   status: 'positive' | 'negative' | 'warning' | 'neutral';
+  startDate: Date;
+  endDate: Date | null;
+  nextRiskValue: number | null;
+  nextStartDate: Date | null;
 }
 
 export function RiskValueCard() {
@@ -21,7 +27,11 @@ export function RiskValueCard() {
     maxValue: 100000,
     threshold: 25000,
     currency: 'EUR',
-    status: 'positive'
+    status: 'positive',
+    startDate: new Date('2024-04-15'),
+    endDate: new Date('2024-05-15'),
+    nextRiskValue: 60000,
+    nextStartDate: new Date('2024-05-16')
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -94,6 +104,29 @@ export function RiskValueCard() {
                 </span>
               </div>
               
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>Validity period:</span>
+                </div>
+                
+                <div className="text-sm flex items-center justify-between">
+                  <div>
+                    <span className="font-medium">From:</span> {format(riskData.startDate, 'dd/MM/yyyy')}
+                  </div>
+                  <div>
+                    <span className="font-medium">To:</span> {riskData.endDate ? format(riskData.endDate, 'dd/MM/yyyy') : 'Indefinite'}
+                  </div>
+                </div>
+                
+                {riskData.nextRiskValue && riskData.nextStartDate && (
+                  <div className="text-xs text-muted-foreground mt-1 border-t pt-2">
+                    <span className="font-medium">Next Risk Value:</span> {formatCurrency(riskData.nextRiskValue, riskData.currency)} 
+                    <span className="ml-1">from {format(riskData.nextStartDate, 'dd/MM/yyyy')}</span>
+                  </div>
+                )}
+              </div>
+              
               <div className="space-y-1">
                 <Progress
                   value={calculatePercentage()}
@@ -102,7 +135,6 @@ export function RiskValueCard() {
                 />
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Critical: {formatCurrency(riskData.threshold, riskData.currency)}</span>
-                  <span>{calculatePercentage().toFixed(0)}%</span>
                 </div>
               </div>
               
@@ -134,9 +166,11 @@ export function RiskValueCard() {
           variant="default" 
           size="sm"
           className="bg-primary/95 hover:bg-primary text-primary-foreground"
-          onClick={() => setIsBlocked(!isBlocked)}
+          asChild
         >
-          {isBlocked ? "Unblock MTO" : "Adjust Risk Value"}
+          <Link to="/risk-management">
+            {isBlocked ? "Unblock MTO" : "Adjust Risk Value"}
+          </Link>
         </Button>
       </CardFooter>
     </Card>
