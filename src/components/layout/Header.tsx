@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ValueChange } from '../ui-custom/StatusIndicator';
+import { format } from 'date-fns';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -23,6 +24,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const [lastUpdated, setLastUpdated] = useState(new Date());
   const [fxRates, setFxRates] = useState<FXRate[]>([
     {
       currency: 'EUR',
@@ -56,6 +58,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
         rate: parseFloat((rate.rate + (Math.random() * 0.002 - 0.001)).toFixed(4)),
         change: parseFloat((rate.change + (Math.random() * 0.1 - 0.05)).toFixed(2))
       })));
+      setLastUpdated(new Date());
     }, 300000); // 5 minutes
 
     return () => clearInterval(interval);
@@ -71,6 +74,10 @@ export function Header({ toggleSidebar }: HeaderProps) {
       description: `Interface switched to ${newMode ? 'dark' : 'light'} mode.`,
       duration: 2000,
     });
+  };
+
+  const formatUpdateTime = (date: Date) => {
+    return format(date, 'dd/MM/yyyy HH:mm');
   };
 
   return (
@@ -94,24 +101,29 @@ export function Header({ toggleSidebar }: HeaderProps) {
           <Menu className="h-5 w-5" />
         </Button>
 
-        {/* FX Rates display */}
-        <div className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-muted/40 rounded-lg">
-          {fxRates.map((rate, index) => (
-            <div key={rate.currency} className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <span>MAD</span>
-                <span>/</span>
+        {/* FX Rates display with last updated date */}
+        <div className="hidden md:flex flex-col">
+          <div className="flex items-center gap-4 px-4 py-1.5 bg-muted/40 rounded-lg">
+            {fxRates.map((rate, index) => (
+              <div key={rate.currency} className="flex items-center gap-2">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <span>MAD</span>
+                  <span>/</span>
+                  <div className="flex items-center gap-1">
+                    {rate.icon}
+                    <span>{rate.currency}</span>
+                  </div>
+                </div>
                 <div className="flex items-center gap-1">
-                  {rate.icon}
-                  <span>{rate.currency}</span>
+                  <span className="font-semibold">{rate.rate.toFixed(4)}</span>
+                  <ValueChange value={rate.change} percentageChange size="sm" />
                 </div>
               </div>
-              <div className="flex items-center gap-1">
-                <span className="font-semibold">{rate.rate.toFixed(4)}</span>
-                <ValueChange value={rate.change} percentageChange size="sm" />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="text-xs text-muted-foreground ml-4 mt-1">
+            Mise à jour: {formatUpdateTime(lastUpdated)}
+          </div>
         </div>
       </div>
       
