@@ -79,7 +79,7 @@ export function MTOList() {
         currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
         balance: balance,
         riskValue: riskValue,
-        maxRiskValue: Math.abs(balance) + riskValue,
+        maxRiskValue: balance + riskValue,
         status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
         decote: 0.015 + Math.random() * 0.02,
         change: Math.random() * 10 - 5,
