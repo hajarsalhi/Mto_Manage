@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { ValueChange } from '../ui-custom/StatusIndicator';
 import { RefreshCw, Bell, BellRing, Euro, DollarSign, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -133,21 +133,14 @@ export function FXRateCard() {
               <span>Ajouter cours de virement</span>
             </Link>
           </Button>
-          <Button 
-            variant={fxData.notificationsEnabled ? "default" : "outline"}
-            size="sm"
-            className="gap-2"
-            asChild
-          >
-            <Link to="/notifications">
-              {fxData.notificationsEnabled ? (
-                <BellRing className="h-4 w-4" />
-              ) : (
-                <Bell className="h-4 w-4" />
-              )}
-              <span>Notifications</span>
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2 bg-muted/80 rounded-md px-3 py-1.5">
+            <Switch 
+              checked={fxData.notificationsEnabled}
+              onCheckedChange={handleToggleNotifications}
+              className="data-[state=checked]:bg-primary"
+            />
+            <span className="text-sm font-medium">FX Rates</span>
+          </div>
           <Button 
             variant="ghost" 
             size="icon" 
