@@ -16,6 +16,7 @@ import CompensationHistory from "./pages/CompensationHistory";
 import ActivityHistory from "./pages/ActivityHistory";
 import TransferRates from "./pages/TransferRates";
 import AddMTO from "./pages/AddMTO";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/activity-history" element={<ActivityHistory />} />
           <Route path="/transfer-rates" element={<TransferRates />} />
           <Route path="/add-mto" element={<AddMTO />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
