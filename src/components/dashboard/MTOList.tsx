@@ -277,7 +277,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
   return (
     <Card 
       variant="glass" 
-      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : ''}`}
+      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : !mto.isBlocked ? 'border-finance-positive border-2' : ''}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2">
@@ -291,7 +291,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
         </div>
         <Badge 
           variant={mto.isBlocked ? "destructive" : "outline"} 
-          className="font-normal"
+          className={`font-normal ${!mto.isBlocked ? 'bg-finance-positive/10 text-finance-positive border-finance-positive' : ''}`}
         >
           {mto.isBlocked ? 'Bloqué' : 'Actif'}
         </Badge>
@@ -399,12 +399,13 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
 
         <div className="pt-4 flex justify-end">
           <Button
-            variant={mto.isBlocked ? "outline" : "destructive"}
+            variant={mto.isBlocked ? "outline" : "outline"}
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
               onToggleBlock();
             }}
+            className={!mto.isBlocked ? "border-finance-positive text-finance-positive hover:bg-finance-positive/10" : ""}
           >
             {mto.isBlocked ? "Gérer le risque" : "Gérer le risque"}
           </Button>

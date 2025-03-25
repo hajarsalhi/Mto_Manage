@@ -36,7 +36,7 @@ export function RiskMTOCard({
       key={mtoId} 
       variant="interactive"
       className={cn(
-        mto.isBlocked && "border-finance-negative/30",
+        mto.isBlocked ? "border-finance-negative/30" : "border-finance-positive/30 border-2",
         isSelected && "ring-2 ring-primary ring-opacity-50"
       )}
       onClick={() => onSelect(mtoId)}
@@ -88,7 +88,16 @@ export function RiskMTOCard({
         </div>
       </CardContent>
       <CardFooter className="pt-2 justify-end">
-        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary/80 hover:text-primary">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className={cn(
+            "h-7 text-xs gap-1", 
+            mto.isBlocked 
+              ? "text-primary/80 hover:text-primary" 
+              : "text-finance-positive hover:text-finance-positive/80"
+          )}
+        >
           <span>Details</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </Button>
