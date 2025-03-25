@@ -68,13 +68,16 @@ export function MTOList() {
         nextRiskStartDate.setDate(nextRiskStartDate.getDate() + 1);
       }
       
+      const balance = Math.random() * 200000 - 50000;
+      const riskValue = Math.random() * 60000;
+      
       return {
         id: `mto${index + 1}`,
         name: `Partner MTO ${index + 1}`,
         currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
-        balance: Math.random() * 200000 - 50000,
-        riskValue: Math.random() * 60000,
-        maxRiskValue: 80000,
+        balance: balance,
+        riskValue: riskValue,
+        maxRiskValue: Math.abs(balance) + riskValue,
         status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
         decote: 0.015 + Math.random() * 0.02,
         change: Math.random() * 10 - 5,
