@@ -343,7 +343,8 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                   <Calendar className="h-3 w-3" />
                   <span>Du: {format(mto.riskStartDate, 'dd/MM/yyyy')}</span>
                 </div>
-                <div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
                   {mto.riskEndDate ? 
                     <span>Au: {format(mto.riskEndDate, 'dd/MM/yyyy')}</span> : 
                     <span>Indéfini</span>
@@ -351,12 +352,20 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                 </div>
               </div>
               
-              {mto.nextRiskValue && mto.nextRiskStartDate && (
-                <div className="text-xs text-muted-foreground mt-1 pt-1 border-t border-border">
-                  <span className="font-medium">Prochain Risk Value:</span> {formatCurrency(mto.nextRiskValue, mto.currency)}
-                  <span className="ml-1">à partir du {format(mto.nextRiskStartDate, 'dd/MM/yyyy')}</span>
-                </div>
-              )}
+              <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                <span className="font-medium">Prochain Risk Value:</span>
+                {mto.nextRiskValue && mto.nextRiskStartDate ? (
+                  <div className="flex flex-col mt-1">
+                    <span>{formatCurrency(mto.nextRiskValue, mto.currency)}</span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Calendar className="h-3 w-3" />
+                      <span>À partir du {format(mto.nextRiskStartDate, 'dd/MM/yyyy')}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="ml-1 italic">Aucun risk value futur configuré</span>
+                )}
+              </div>
             </div>
           </div>
 
