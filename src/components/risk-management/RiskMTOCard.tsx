@@ -68,7 +68,6 @@ export function RiskMTOCard({
             <Progress
               value={(mto.currentRisk / mto.maxRisk) * 100}
               className="h-1.5"
-              indicatorClassName={getRiskStatusColor(mto.currentRisk, mto.maxRisk)}
             />
           </div>
           
