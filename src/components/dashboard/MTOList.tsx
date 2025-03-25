@@ -118,11 +118,7 @@ export function MTOList() {
   };
 
   const handleAddMTO = () => {
-    toast({
-      title: "Fonctionnalité à venir",
-      description: "L'ajout de nouveaux MTO sera disponible dans la prochaine mise à jour.",
-      duration: 3000,
-    });
+    navigate('/add-mto');
   };
 
   const handleRiskManagement = (mtoId: string) => {

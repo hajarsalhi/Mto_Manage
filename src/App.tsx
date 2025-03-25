@@ -15,6 +15,7 @@ import CompensationValidation from "./pages/CompensationValidation";
 import CompensationHistory from "./pages/CompensationHistory";
 import ActivityHistory from "./pages/ActivityHistory";
 import TransferRates from "./pages/TransferRates";
+import AddMTO from "./pages/AddMTO";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/compensation-history" element={<CompensationHistory />} />
           <Route path="/activity-history" element={<ActivityHistory />} />
           <Route path="/transfer-rates" element={<TransferRates />} />
+          <Route path="/add-mto" element={<AddMTO />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
