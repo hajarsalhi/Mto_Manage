@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-cust
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '../ui-custom/StatusIndicator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Plus, TrendingUp, AlertTriangle, Search, SlidersHorizontal, Calendar } from 'lucide-react';
+import { ArrowRight, TrendingUp, AlertTriangle, Search, SlidersHorizontal, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
@@ -209,16 +209,6 @@ export function MTOList({ showCriticalFirst = false }: MTOListProps) {
                 onToggleBlock={() => handleRiskManagement(mto.id)}
               />
             ))}
-            <div className="flex items-center justify-center h-[280px] border-2 border-dashed border-border rounded-lg hover:border-primary/50 transition-colors cursor-pointer">
-              <Button 
-                variant="ghost" 
-                className="gap-2 text-muted-foreground h-auto py-8 px-6 flex-col"
-                onClick={handleAddMTO}
-              >
-                <Plus className="h-12 w-12" />
-                <span className="text-lg font-medium mt-2">Ajouter un partenaire MTO</span>
-              </Button>
-            </div>
           </>
         )}
       </div>

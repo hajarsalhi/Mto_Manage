@@ -8,7 +8,8 @@ import {
   Settings,
   ChevronsLeft,
   ChevronsRight,
-  Upload
+  Upload,
+  Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -145,6 +146,12 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               to="/notifications" 
               icon={Bell} 
               label="Notifications" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarLink 
+              to="/add-mto" 
+              icon={Plus} 
+              label="Ajouter MTO" 
               isCollapsed={isCollapsed} 
             />
           </div>
