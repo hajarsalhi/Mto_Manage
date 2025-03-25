@@ -26,7 +26,8 @@ export default function RiskManagement() {
     formatCurrency,
     calculatePercentage,
     getStatusColor,
-    shouldBlockMto
+    shouldBlockMto,
+    calculateMaxRiskValue
   } = useRiskManagement(mtoData, riskHistoryData);
 
   return (
@@ -75,6 +76,7 @@ export default function RiskManagement() {
             formatCurrency={formatCurrency}
             calculatePercentage={calculatePercentage}
             getStatusColor={getStatusColor}
+            calculateMaxRiskValue={calculateMaxRiskValue}
           />
           
           <RiskHistoryTable

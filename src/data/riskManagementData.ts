@@ -5,7 +5,7 @@ export const mtoData = {
     currency: "EUR",
     balance: 326709.94,
     currentRisk: 50000,
-    maxRisk: 100000,
+    maxRisk: 376709.94, // Balance + currentRisk
     threshold: 25000,
     isBlocked: false
   },
@@ -14,7 +14,7 @@ export const mtoData = {
     currency: "USD",
     balance: 125780.45,
     currentRisk: 50000,
-    maxRisk: 100000,
+    maxRisk: 175780.45, // Balance + currentRisk
     threshold: 25000,
     isBlocked: false
   },
@@ -23,7 +23,7 @@ export const mtoData = {
     currency: "EUR",
     balance: 87650.20,
     currentRisk: 35000,
-    maxRisk: 80000,
+    maxRisk: 122650.20, // Balance + currentRisk
     threshold: 20000,
     isBlocked: false
   },
@@ -32,9 +32,9 @@ export const mtoData = {
     currency: "EUR",
     balance: -1240.75,
     currentRisk: 20000,
-    maxRisk: 50000,
+    maxRisk: 18759.25, // Balance + currentRisk
     threshold: 10000,
-    isBlocked: true
+    isBlocked: false // Not blocked since maxRisk > 0
   }
 };
 

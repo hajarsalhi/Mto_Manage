@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
@@ -39,6 +38,7 @@ interface RiskValueFormProps {
   formatCurrency: (amount: number, currency: string) => string;
   calculatePercentage: () => number;
   getStatusColor: () => string;
+  calculateMaxRiskValue: (balance: number, riskValue: number) => number;
 }
 
 export function RiskValueForm({
@@ -56,8 +56,15 @@ export function RiskValueForm({
   onSubmit,
   formatCurrency,
   calculatePercentage,
-  getStatusColor
+  getStatusColor,
+  calculateMaxRiskValue
 }: RiskValueFormProps) {
+  const getActualMaxRisk = () => {
+    if (!selectedMto) return 0;
+    const mto = mtoData[selectedMto];
+    return calculateMaxRiskValue(mto.balance, riskValue);
+  };
+
   return (
     <Card className="mb-8">
       <form onSubmit={onSubmit}>
@@ -172,7 +179,7 @@ export function RiskValueForm({
                 <div className="flex justify-between items-center text-xs text-muted-foreground mt-1">
                   <span>Critical: {selectedMto && formatCurrency(mtoData[selectedMto].threshold, mtoData[selectedMto].currency)}</span>
                   <span>{calculatePercentage().toFixed(0)}%</span>
-                  <span>Max: {selectedMto && formatCurrency(mtoData[selectedMto].maxRisk, mtoData[selectedMto].currency)}</span>
+                  <span>Max: {selectedMto && formatCurrency(getActualMaxRisk(), mtoData[selectedMto].currency)}</span>
                 </div>
               </div>
             </div>
@@ -214,9 +221,9 @@ export function RiskValueForm({
                   
                   <div className="mt-6 text-sm text-muted-foreground">
                     {isBlocked ? (
-                      <p>The MTO is blocked because the maximum risk value is less than or equal to zero. Adjusting the risk value will allow operations to resume.</p>
+                      <p>The MTO is blocked because the maximum risk value (Balance + Risk Value) is less than or equal to zero. Adjusting the risk value will allow operations to resume.</p>
                     ) : (
-                      <p>Maintain adequate risk value to prevent operations from being blocked. The system will automatically block operations if the maximum risk value is less than or equal to zero.</p>
+                      <p>Maintain adequate risk value to prevent operations from being blocked. The system will automatically block operations if the maximum risk value (Balance + Risk Value) is less than or equal to zero.</p>
                     )}
                   </div>
                 </div>

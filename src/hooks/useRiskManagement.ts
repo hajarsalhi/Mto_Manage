@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -43,8 +42,7 @@ export function useRiskManagement(
       const mto = mtoData[value];
       setRiskValue(mto.currentRisk);
       
-      // Check if the MTO should be blocked based on max risk value
-      const shouldBeBlocked = shouldBlockMto(mto.maxRisk);
+      const shouldBeBlocked = shouldBlockMto(mto.balance, mto.currentRisk);
       setIsBlocked(shouldBeBlocked);
     }
   };
@@ -88,8 +86,7 @@ export function useRiskManagement(
       
       const mto = mtoData[selectedMto];
       
-      // Check if MTO should be blocked based on the max risk value
-      const shouldBeBlocked = shouldBlockMto(mto.maxRisk);
+      const shouldBeBlocked = shouldBlockMto(mto.balance, riskValue);
       
       toast({
         title: "Risk value updated",
@@ -97,7 +94,6 @@ export function useRiskManagement(
         duration: 3000,
       });
       
-      // Update blocking status based on max risk value
       if (shouldBeBlocked && !isBlocked) {
         setIsBlocked(true);
         
@@ -133,7 +129,8 @@ export function useRiskManagement(
     if (!selectedMto) return 0;
     
     const mto = mtoData[selectedMto];
-    return (riskValue / mto.maxRisk) * 100;
+    const maxRiskValue = calculateMaxRiskValue(mto.balance, riskValue);
+    return (riskValue / maxRiskValue) * 100;
   };
   
   const getStatusColor = () => {
@@ -143,9 +140,13 @@ export function useRiskManagement(
     return "bg-finance-negative";
   };
 
-  // Update the blocking logic to check max risk value <= 0
-  const shouldBlockMto = (maxRisk: number) => {
-    return maxRisk <= 0;
+  const calculateMaxRiskValue = (balance: number, riskValue: number) => {
+    return balance + riskValue;
+  };
+
+  const shouldBlockMto = (balance: number, riskValue: number) => {
+    const maxRiskValue = calculateMaxRiskValue(balance, riskValue);
+    return maxRiskValue <= 0;
   };
 
   return {
@@ -163,6 +164,7 @@ export function useRiskManagement(
     formatCurrency,
     calculatePercentage,
     getStatusColor,
-    shouldBlockMto
+    shouldBlockMto,
+    calculateMaxRiskValue
   };
 }

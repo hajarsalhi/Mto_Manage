@@ -279,8 +279,10 @@ interface MTOCardProps {
 }
 
 function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
+  const actualMaxRiskValue = mto.balance + mto.riskValue;
+
   const calculatePercentage = () => {
-    return (mto.riskValue / mto.maxRiskValue) * 100;
+    return (mto.riskValue / actualMaxRiskValue) * 100;
   };
 
   const getStatusColor = () => {
@@ -300,7 +302,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     }).format(displayAmount);
   };
 
-  const isBlocked = mto.maxRiskValue <= 0;
+  const isBlocked = actualMaxRiskValue <= 0;
 
   return (
     <Card 
@@ -368,7 +370,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                   {formatCurrency(mto.riskValue, mto.currency)}
                 </p>
                 <span className="text-sm text-muted-foreground">
-                  Max: {formatCurrency(mto.maxRiskValue, mto.currency)}
+                  Max: {formatCurrency(actualMaxRiskValue, mto.currency)}
                 </span>
               </div>
               
@@ -425,7 +427,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             )}
             <p>
               {isBlocked 
-                ? "Les opérations sont bloquées car la valeur maximale de risque est inférieure ou égale à zéro." 
+                ? "Les opérations sont bloquées car la valeur maximale de risque (Balance + Risk Value) est inférieure ou égale à zéro." 
                 : mto.isCritical
                 ? "Le partenaire est en état critique avec une balance ou une risk value limitée."
                 : "La valeur de risque est dans les limites acceptables."}
