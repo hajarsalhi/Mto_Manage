@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '../ui-custom/StatusIndicator';
 import { Badge } from '@/components/ui/badge';
@@ -76,7 +76,7 @@ export function MTOList({ showCriticalFirst = false }: MTOListProps) {
       const balance = Math.random() * 200000 - 50000;
       const riskValue = Math.random() * 60000;
       
-      const isBlocked = balance + riskValue < 0;
+      const isBlocked = balance + riskValue <= 0;
       const isCritical = isBlocked || balance < 10000 || (balance + riskValue < 20000);
       
       return {
@@ -366,7 +366,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                   {formatCurrency(mto.riskValue, mto.currency)}
                 </p>
                 <span className="text-sm text-muted-foreground">
-                  Max: {formatCurrency(mto.riskValue, mto.currency)}
+                  Max: {formatCurrency(actualMaxRiskValue, mto.currency)}
                 </span>
               </div>
               
@@ -448,4 +448,3 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     </Card>
   );
 }
-

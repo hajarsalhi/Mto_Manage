@@ -24,7 +24,7 @@ interface RiskValueData {
 export function RiskValueCard() {
   const [riskData, setRiskData] = useState<RiskValueData>({
     currentValue: 75000,
-    maxValue: 100000,
+    maxValue: 100000, // This should be balance + risk value
     threshold: 25000,
     currency: 'EUR',
     status: 'positive',
