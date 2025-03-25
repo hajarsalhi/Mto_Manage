@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { MTOList } from '@/components/dashboard/MTOList';
+import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
 import { FXRateCard } from '@/components/dashboard/FXRateCard';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Button } from '@/components/ui/button';
@@ -68,7 +68,7 @@ export default function Dashboard() {
         </div>
         
         <div className="mb-6">
-          <MTOList showCriticalFirst={true} />
+          <MTOCollapsible showCriticalFirst={true} />
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
