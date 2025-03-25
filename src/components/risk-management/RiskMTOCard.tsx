@@ -38,11 +38,11 @@ export function RiskMTOCard({
     return "bg-finance-negative";
   };
 
-  // Calculate the actual max risk value (balance + risk value)
-  const actualMaxRisk = mto.currentRisk;
+  // Calculate the max risk value (balance + risk value)
+  const maxRiskValue = mto.balance + mto.currentRisk;
   
   // Determine if MTO should be blocked (balance + risk value <= 0)
-  const shouldBeBlocked = mto.balance + mto.currentRisk <= 0;
+  const shouldBeBlocked = maxRiskValue <= 0;
 
   return (
     <Card 
@@ -72,15 +72,15 @@ export function RiskMTOCard({
           
           <div className="space-y-1">
             <Progress
-              value={(mto.currentRisk / Math.abs(actualMaxRisk)) * 100}
+              value={(mto.currentRisk / Math.abs(maxRiskValue)) * 100}
               className="h-1.5"
-              indicatorClassName={getRiskStatusColor(mto.currentRisk, actualMaxRisk)}
+              indicatorClassName={getRiskStatusColor(mto.currentRisk, maxRiskValue)}
             />
           </div>
           
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Min: {formatCurrency(mto.threshold, mto.currency)}</span>
-            <span>Max: {formatCurrency(mto.currentRisk, mto.currency)}</span>
+            <span>Max: {formatCurrency(maxRiskValue, mto.currency)}</span>
           </div>
           
           <div className="flex justify-between items-center mt-2">

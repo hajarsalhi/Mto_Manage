@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -138,7 +139,8 @@ export function useRiskManagement(
   };
 
   const calculateMaxRiskValue = (balance: number, riskValue: number) => {
-    return riskValue;
+    // Update to return the sum of balance and risk value
+    return balance + riskValue;
   };
 
   const shouldBlockMto = (balance: number, riskValue: number) => {
