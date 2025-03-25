@@ -14,10 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
-import { Bell, Clock, Mail, FileText, Package, Users } from 'lucide-react';
+import { Bell, Clock, Mail, FileText, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { mtoData } from '@/data/riskManagementData';
 
 export default function Notifications() {
@@ -27,9 +26,9 @@ export default function Notifications() {
   const [notificationTime, setNotificationTime] = useState("16:00");
   const [emailRecipients, setEmailRecipients] = useState("finance@mto.com, operations@mto.com");
   const [selectedMTOs, setSelectedMTOs] = useState<string[]>(["remitly"]);
-  const [isSaving, setIsSaving] = useState(false);
   const [selectedMTO, setSelectedMTO] = useState<string | undefined>("remitly");
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
   
   const mtoOptions = Object.entries(mtoData).map(([id, data]) => ({
     id,
@@ -139,42 +138,6 @@ export default function Notifications() {
                                   ))}
                                 </SelectContent>
                               </Select>
-                              
-                              <div className="mt-4">
-                                <Label>Selected MTO Partners</Label>
-                                <div className="grid gap-2 mt-2">
-                                  {selectedMTOs.map(mtoId => {
-                                    const mto = mtoData[mtoId as keyof typeof mtoData];
-                                    return (
-                                      <div 
-                                        key={mtoId}
-                                        className={cn(
-                                          "flex items-center justify-between p-3 rounded-md border",
-                                          mtoId === "remitly" 
-                                            ? "bg-amber-100/50 border-amber-200" 
-                                            : "bg-secondary/30"
-                                        )}
-                                      >
-                                        <span className="font-medium">{mto.name}</span>
-                                        <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() => {
-                                            setSelectedMTOs(prev => prev.filter(id => id !== mtoId));
-                                            if (selectedMTO === mtoId) {
-                                              setSelectedMTO(undefined);
-                                            }
-                                          }}
-                                          className="h-8 px-2 text-muted-foreground hover:text-destructive"
-                                        >
-                                          Remove
-                                        </Button>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
                             </div>
                           </div>
                         </div>
