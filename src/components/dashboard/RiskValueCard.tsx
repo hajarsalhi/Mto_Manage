@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -151,7 +152,11 @@ export function RiskValueCard() {
                   <TrendingUp className="h-5 w-5 flex-shrink-0" />
                 )}
                 <div>
-                  <p>Prochain Risk Value: Aucun risk value futur configuré</p>
+                  {riskData.nextRiskValue && riskData.nextStartDate ? (
+                    <p>Prochain Risk Value: {formatCurrency(riskData.nextRiskValue, riskData.currency)} à partir du {format(riskData.nextStartDate, 'dd/MM/yyyy')}</p>
+                  ) : (
+                    <p>Prochain Risk Value: Aucun risk value futur configuré</p>
+                  )}
                 </div>
               </div>
             </>

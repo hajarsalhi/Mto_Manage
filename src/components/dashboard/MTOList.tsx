@@ -384,9 +384,9 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                 </div>
               </div>
               
-              <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                <span className="font-medium">Prochain Risk Value:</span>
-                {mto.nextRiskValue && mto.nextRiskStartDate ? (
+              {mto.nextRiskValue && mto.nextRiskStartDate && (
+                <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                  <span className="font-medium">Prochain Risk Value:</span>
                   <div className="flex flex-col mt-1">
                     <span>{formatCurrency(mto.nextRiskValue, mto.currency)}</span>
                     <div className="flex items-center gap-1 mt-0.5">
@@ -394,10 +394,8 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                       <span>À partir du {format(mto.nextRiskStartDate, 'dd/MM/yyyy')}</span>
                     </div>
                   </div>
-                ) : (
-                  <span className="ml-1 italic">Aucun risk value futur configuré</span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -416,11 +414,11 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
             )}
             <p>
-              {isBlocked 
-                ? "Prochain Risk Value: Aucun risk value futur configuré" 
-                : mto.isCritical
-                ? "Le partenaire est en état critique avec une balance ou une risk value limitée."
-                : "Prochain Risk Value: Aucun risk value futur configuré"}
+              {mto.nextRiskValue && mto.nextRiskStartDate ? (
+                `Prochain Risk Value: ${formatCurrency(mto.nextRiskValue, mto.currency)} à partir du ${format(mto.nextRiskStartDate, 'dd/MM/yyyy')}`
+              ) : (
+                "Prochain Risk Value: Aucun risk value futur configuré"
+              )}
             </p>
           </div>
         </div>
@@ -442,3 +440,4 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     </Card>
   );
 }
+
