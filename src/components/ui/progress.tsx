@@ -14,7 +14,6 @@ const Progress = React.forwardRef<
   ProgressProps
 >(({ className, value, indicatorClassName, ...props }, ref) => {
   // Calculate indicator color based on value percentage
-  // Reversed logic: high values are now red (negative), low values are green (positive)
   const getIndicatorColor = (value: number | undefined) => {
     if (value === undefined) return "";
     if (value < 30) return "bg-finance-positive";
