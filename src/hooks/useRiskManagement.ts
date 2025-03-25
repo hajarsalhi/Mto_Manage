@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -128,8 +127,7 @@ export function useRiskManagement(
     if (!selectedMto) return 0;
     
     const mto = mtoData[selectedMto];
-    const maxRiskValue = calculateMaxRiskValue(mto.balance, riskValue);
-    return (riskValue / Math.abs(maxRiskValue)) * 100;
+    return (riskValue / Math.abs(riskValue)) * 100;
   };
   
   const getStatusColor = () => {
@@ -140,12 +138,11 @@ export function useRiskManagement(
   };
 
   const calculateMaxRiskValue = (balance: number, riskValue: number) => {
-    return balance + riskValue;
+    return riskValue;
   };
 
   const shouldBlockMto = (balance: number, riskValue: number) => {
-    const maxRiskValue = calculateMaxRiskValue(balance, riskValue);
-    return maxRiskValue <= 0;
+    return balance + riskValue <= 0;
   };
 
   return {

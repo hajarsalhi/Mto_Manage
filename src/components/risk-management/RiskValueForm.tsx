@@ -62,8 +62,8 @@ export function RiskValueForm({
 }: RiskValueFormProps) {
   const getActualMaxRisk = () => {
     if (!selectedMto) return 0;
-    const mto = mtoData[selectedMto];
-    return calculateMaxRiskValue(mto.balance, riskValue);
+    // Max risk value is the risk value itself, not balance + risk value
+    return riskValue;
   };
 
   return (

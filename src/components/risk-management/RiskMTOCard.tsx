@@ -39,10 +39,10 @@ export function RiskMTOCard({
   };
 
   // Calculate the actual max risk value (balance + risk value)
-  const actualMaxRisk = mto.balance + mto.currentRisk;
+  const actualMaxRisk = mto.currentRisk;
   
-  // Determine if MTO should be blocked (actualMaxRisk <= 0)
-  const shouldBeBlocked = actualMaxRisk <= 0;
+  // Determine if MTO should be blocked (balance + risk value <= 0)
+  const shouldBeBlocked = mto.balance + mto.currentRisk <= 0;
 
   return (
     <Card 
@@ -80,7 +80,7 @@ export function RiskMTOCard({
           
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Min: {formatCurrency(mto.threshold, mto.currency)}</span>
-            <span>Max: {formatCurrency(actualMaxRisk, mto.currency)}</span>
+            <span>Max: {formatCurrency(mto.currentRisk, mto.currency)}</span>
           </div>
           
           <div className="flex justify-between items-center mt-2">

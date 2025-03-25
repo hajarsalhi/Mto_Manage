@@ -128,13 +128,11 @@ export function MTOList({ showCriticalFirst = false }: MTOListProps) {
   }, [searchTerm, mtoList, showCriticalFirst]);
 
   const formatCurrency = (amount: number, currency: string) => {
-    const displayAmount = amount < 0 ? 0 : amount;
-    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2
-    }).format(displayAmount);
+    }).format(amount);
   };
 
   const handleAddMTO = () => {
@@ -282,7 +280,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
   const actualMaxRiskValue = mto.balance + mto.riskValue;
 
   const calculatePercentage = () => {
-    return (mto.riskValue / actualMaxRiskValue) * 100;
+    return (mto.riskValue / Math.abs(actualMaxRiskValue)) * 100;
   };
 
   const getStatusColor = () => {
@@ -293,13 +291,11 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    const displayAmount = amount < 0 ? 0 : amount;
-    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2
-    }).format(displayAmount);
+    }).format(amount);
   };
 
   const isBlocked = actualMaxRiskValue <= 0;
@@ -370,7 +366,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                   {formatCurrency(mto.riskValue, mto.currency)}
                 </p>
                 <span className="text-sm text-muted-foreground">
-                  Max: {formatCurrency(actualMaxRiskValue, mto.currency)}
+                  Max: {formatCurrency(mto.riskValue, mto.currency)}
                 </span>
               </div>
               
@@ -452,3 +448,4 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     </Card>
   );
 }
+
