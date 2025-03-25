@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { ValueChange } from '../ui-custom/StatusIndicator';
-import { RefreshCw, Bell, Euro, DollarSign, PlusCircle } from 'lucide-react';
+import { RefreshCw, Bell, BellRing, Euro, DollarSign, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -32,7 +32,8 @@ export function FXRateCard() {
         icon: <DollarSign className="h-4 w-4" />
       }
     ],
-    updatedAt: '2023-04-15T09:30:00Z'
+    updatedAt: '2023-04-15T09:30:00Z',
+    notificationsEnabled: false
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -92,10 +93,19 @@ export function FXRateCard() {
     }, 1500);
   };
   
-  const handleNotify = () => {
+  const handleToggleNotifications = () => {
+    const newState = !fxData.notificationsEnabled;
+    
+    setFxData(prev => ({
+      ...prev,
+      notificationsEnabled: newState
+    }));
+    
     toast({
-      title: "Notification settings",
-      description: "Configure FX rate notification settings in the Notifications page.",
+      title: newState ? "Notifications Enabled" : "Notifications Disabled",
+      description: newState 
+        ? "Partners will receive FX rate notifications via email." 
+        : "Partners will no longer receive FX rate notifications.",
       duration: 3000,
     });
   };
@@ -124,12 +134,19 @@ export function FXRateCard() {
             </Link>
           </Button>
           <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8"
-            onClick={handleNotify}
+            variant={fxData.notificationsEnabled ? "default" : "outline"}
+            size="sm"
+            className="gap-2"
+            asChild
           >
-            <Bell className="h-4 w-4" />
+            <Link to="/notifications">
+              {fxData.notificationsEnabled ? (
+                <BellRing className="h-4 w-4" />
+              ) : (
+                <Bell className="h-4 w-4" />
+              )}
+              <span>Notifications</span>
+            </Link>
           </Button>
           <Button 
             variant="ghost" 
@@ -185,6 +202,16 @@ export function FXRateCard() {
                 <p className="font-medium mb-1">Tomorrow's FX Rate Notification</p>
                 <p className="text-muted-foreground">Notifications will be sent at 16:00 today with tomorrow's applicable rate.</p>
               </div>
+              
+              {fxData.notificationsEnabled && (
+                <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800 text-xs">
+                  <div className="flex items-center gap-2">
+                    <BellRing className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="font-medium text-green-800 dark:text-green-400">Notifications activated</span>
+                  </div>
+                  <span className="text-muted-foreground">Daily at 16:00</span>
+                </div>
+              )}
             </>
           )}
         </div>
