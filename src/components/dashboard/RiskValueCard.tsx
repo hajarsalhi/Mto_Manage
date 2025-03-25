@@ -130,7 +130,6 @@ export function RiskValueCard() {
                 <Progress
                   value={calculatePercentage()}
                   className="h-2"
-                  indicatorClassName={getStatusColor()}
                 />
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Critical: {formatCurrency(riskData.threshold, riskData.currency)}</span>
