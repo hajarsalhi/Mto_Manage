@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -37,11 +36,9 @@ export function RiskValueCard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
 
-  // Simulate data fetch and check if blocked
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
-      // Determine if blocked based on maxValue (maxValue <= 0)
       setIsBlocked(riskData.maxValue <= 0);
       setIsLoading(false);
     }, 1500);
