@@ -34,9 +34,14 @@ interface MTOData {
   riskEndDate: Date | null;
   nextRiskValue: number | null;
   nextRiskStartDate: Date | null;
+  isCritical?: boolean;
 }
 
-export function MTOList() {
+interface MTOListProps {
+  showCriticalFirst?: boolean;
+}
+
+export function MTOList({ showCriticalFirst = false }: MTOListProps) {
   const [mtoList, setMtoList] = useState<MTOData[]>([]);
   const [filteredList, setFilteredList] = useState<MTOData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,6 +77,7 @@ export function MTOList() {
       const riskValue = Math.random() * 60000;
       
       const isBlocked = balance + riskValue < 0;
+      const isCritical = isBlocked || balance < 10000 || (balance + riskValue < 20000);
       
       return {
         id: `mto${index + 1}`,
@@ -87,7 +93,8 @@ export function MTOList() {
         riskStartDate: startDate,
         riskEndDate: endDate,
         nextRiskValue: nextRiskValue,
-        nextRiskStartDate: nextRiskStartDate
+        nextRiskStartDate: nextRiskStartDate,
+        isCritical: isCritical
       };
     });
     
@@ -101,13 +108,24 @@ export function MTOList() {
   }, []);
 
   useEffect(() => {
-    const filtered = mtoList.filter(mto =>
+    let filtered = mtoList.filter(mto =>
       mto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mto.currency.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    
+    if (showCriticalFirst) {
+      filtered = [...filtered].sort((a, b) => {
+        if (a.isCritical && !b.isCritical) return -1;
+        if (!a.isCritical && b.isCritical) return 1;
+        if (a.isBlocked && !b.isBlocked) return -1;
+        if (!a.isBlocked && b.isBlocked) return 1;
+        return 0;
+      });
+    }
+    
     setFilteredList(filtered);
     setCurrentPage(1);
-  }, [searchTerm, mtoList]);
+  }, [searchTerm, mtoList, showCriticalFirst]);
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -141,10 +159,21 @@ export function MTOList() {
     currentPage * itemsPerPage
   );
 
+  const criticalMTOs = filteredList.filter(mto => mto.isCritical);
+  const hasCriticalMTOs = criticalMTOs.length > 0;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <h2 className="text-xl font-semibold">Partenaires MTO</h2>
+        <div>
+          <h2 className="text-xl font-semibold">Partenaires MTO</h2>
+          {hasCriticalMTOs && (
+            <p className="text-finance-negative text-sm mt-1 flex items-center gap-1">
+              <AlertTriangle className="h-4 w-4" />
+              {criticalMTOs.length} partenaire(s) en état critique
+            </p>
+          )}
+        </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <div className="relative flex-1 sm:flex-none sm:min-w-[300px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -248,14 +277,6 @@ interface MTOCardProps {
 }
 
 function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2
-    }).format(amount);
-  };
-
   const calculatePercentage = () => {
     return (mto.riskValue / mto.maxRiskValue) * 100;
   };
@@ -267,23 +288,36 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     return "bg-finance-positive";
   };
 
+  const formatCurrency = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2
+    }).format(amount);
+  };
+
   const combinedValue = mto.balance + mto.riskValue;
   const isNegative = combinedValue < 0;
 
   return (
     <Card 
       variant="glass" 
-      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : !mto.isBlocked ? 'border-finance-positive border-2' : ''}`}
+      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : !mto.isBlocked ? 'border-finance-positive border-2' : ''} ${mto.isCritical ? 'shadow-md shadow-finance-negative/20' : ''}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2">
           <StatusIndicator 
-            status={mto.status} 
-            pulsate={mto.isBlocked}
+            status={mto.isCritical ? "negative" : mto.status}
+            pulsate={mto.isBlocked || mto.isCritical}
           />
           <CardTitle className="text-lg font-semibold">
             {mto.name}
           </CardTitle>
+          {mto.isCritical && !mto.isBlocked && (
+            <Badge variant="outline" className="ml-2 bg-finance-negative/10 text-finance-negative border-finance-negative">
+              Critique
+            </Badge>
+          )}
         </div>
         <Badge 
           variant={mto.isBlocked ? "destructive" : "outline"} 
@@ -297,14 +331,13 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
           className="pt-4 space-y-6 cursor-pointer"
           onClick={onClick}
         >
-          {/* Real Time Balance (formerly Current Balance) */}
           <div className="space-y-2">
             <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
               Real Time Balance
             </h3>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-2xl font-bold">
+                <p className={`text-2xl font-bold ${mto.balance < 0 ? 'text-finance-negative' : ''}`}>
                   {formatCurrency(mto.balance, mto.currency)}
                 </p>
                 <ValueChange 
@@ -322,7 +355,6 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             </div>
           </div>
 
-          {/* Risk Value (formerly Valeur de Risque) */}
           <div className="space-y-2">
             <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
               Risk Value
@@ -374,13 +406,16 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             </div>
           </div>
 
-          {/* Status Message */}
           <div className={`p-3 rounded-lg border text-xs flex items-start gap-2 ${
             mto.isBlocked ? 
               "bg-finance-negative/10 border-finance-negative/20 text-finance-negative" : 
+              mto.isCritical ?
+              "bg-finance-warning/10 border-finance-warning/20 text-finance-warning" :
               "bg-finance-positive/10 border-finance-positive/20 text-finance-positive"
           }`}>
             {mto.isBlocked ? (
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            ) : mto.isCritical ? (
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
             ) : (
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
@@ -388,6 +423,8 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             <p>
               {mto.isBlocked 
                 ? "Les opérations sont bloquées car la balance + risk value est inférieure à zéro." 
+                : mto.isCritical
+                ? "Le partenaire est en état critique avec une balance ou une risk value limitée."
                 : "La valeur de risque est dans les limites acceptables."}
             </p>
           </div>
