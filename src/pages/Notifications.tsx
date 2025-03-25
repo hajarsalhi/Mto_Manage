@@ -14,10 +14,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
-import { Bell, Clock, Mail, FileText, Package } from 'lucide-react';
+import { Bell, Clock, Mail, FileText, Package, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { mtoData } from '@/data/riskManagementData';
 
 export default function Notifications() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -25,26 +26,15 @@ export default function Notifications() {
   const [sftpEnabled, setSftpEnabled] = useState(false);
   const [notificationTime, setNotificationTime] = useState("16:00");
   const [emailRecipients, setEmailRecipients] = useState("finance@mto.com, operations@mto.com");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(["fx-rates"]);
+  const [selectedMTOs, setSelectedMTOs] = useState<string[]>(["remitly"]);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedMTO, setSelectedMTO] = useState<string | undefined>("remitly");
   const { toast } = useToast();
   
-  const productOptions = [
-    { id: "fx-rates", name: "FX Rates" },
-    { id: "settlements", name: "Settlements" },
-    { id: "transactions", name: "Transactions" },
-    { id: "balance-updates", name: "Balance Updates" },
-  ];
-
-  const handleProductToggle = (productId: string) => {
-    setSelectedProducts(prev => {
-      if (prev.includes(productId)) {
-        return prev.filter(id => id !== productId);
-      } else {
-        return [...prev, productId];
-      }
-    });
-  };
+  const mtoOptions = Object.entries(mtoData).map(([id, data]) => ({
+    id,
+    name: data.name
+  }));
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +49,10 @@ export default function Notifications() {
       return;
     }
     
-    if (selectedProducts.length === 0) {
+    if (selectedMTOs.length === 0) {
       toast({
         title: "Error",
-        description: "Please select at least one product for notifications.",
+        description: "Please select at least one MTO partner for notifications.",
         variant: "destructive",
         duration: 3000,
       });
@@ -81,6 +71,14 @@ export default function Notifications() {
         duration: 3000,
       });
     }, 1500);
+  };
+
+  const handleMTOSelect = (mtoId: string) => {
+    setSelectedMTO(mtoId);
+    
+    if (!selectedMTOs.includes(mtoId)) {
+      setSelectedMTOs(prev => [...prev, mtoId]);
+    }
   };
 
   return (
@@ -120,42 +118,63 @@ export default function Notifications() {
                     
                     <div className="rounded-lg border overflow-hidden">
                       <div className="bg-secondary/70 p-4 border-b border-border">
-                        <h3 className="text-sm font-medium">Products</h3>
+                        <h3 className="text-sm font-medium">MTO Partners</h3>
                       </div>
                       
                       <div className="p-4 space-y-4">
                         <div className="flex items-center gap-3">
-                          <Package className="h-5 w-5 text-muted-foreground" />
+                          <Users className="h-5 w-5 text-muted-foreground" />
                           <div className="flex-1">
                             <div className="form-group">
-                              <Label htmlFor="products">Select Products for Notifications</Label>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
-                                {productOptions.map(product => (
-                                  <div 
-                                    key={product.id}
-                                    className={cn(
-                                      "flex items-center gap-2 p-3 rounded-md border cursor-pointer transition-colors",
-                                      selectedProducts.includes(product.id) 
-                                        ? "bg-primary/10 border-primary/30" 
-                                        : "bg-secondary/30 hover:bg-secondary/50"
-                                    )}
-                                  >
-                                    <Switch 
-                                      checked={selectedProducts.includes(product.id)} 
-                                      onCheckedChange={() => handleProductToggle(product.id)}
-                                    />
-                                    <span 
-                                      className="font-medium"
-                                      onClick={() => handleProductToggle(product.id)}
-                                    >
-                                      {product.name}
-                                    </span>
-                                  </div>
-                                ))}
+                              <Label htmlFor="mto-select">Select MTO Partner</Label>
+                              <Select value={selectedMTO} onValueChange={handleMTOSelect}>
+                                <SelectTrigger id="mto-select" className="w-full mt-2">
+                                  <SelectValue placeholder="Sélectionner un partenaire MTO" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {mtoOptions.map(mto => (
+                                    <SelectItem key={mto.id} value={mto.id}>
+                                      {mto.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              
+                              <div className="mt-4">
+                                <Label>Selected MTO Partners</Label>
+                                <div className="grid gap-2 mt-2">
+                                  {selectedMTOs.map(mtoId => {
+                                    const mto = mtoData[mtoId as keyof typeof mtoData];
+                                    return (
+                                      <div 
+                                        key={mtoId}
+                                        className={cn(
+                                          "flex items-center justify-between p-3 rounded-md border",
+                                          mtoId === "remitly" 
+                                            ? "bg-amber-100/50 border-amber-200" 
+                                            : "bg-secondary/30"
+                                        )}
+                                      >
+                                        <span className="font-medium">{mto.name}</span>
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => {
+                                            setSelectedMTOs(prev => prev.filter(id => id !== mtoId));
+                                            if (selectedMTO === mtoId) {
+                                              setSelectedMTO(undefined);
+                                            }
+                                          }}
+                                          className="h-8 px-2 text-muted-foreground hover:text-destructive"
+                                        >
+                                          Remove
+                                        </Button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
-                              <p className="text-xs text-muted-foreground mt-2">
-                                Select which products to send notifications for
-                              </p>
                             </div>
                           </div>
                         </div>
@@ -269,8 +288,8 @@ export default function Notifications() {
                   <div className="bg-accent/50 rounded-lg p-4 border border-border">
                     <h3 className="text-sm font-medium mb-2">About Notifications</h3>
                     <p className="text-sm text-muted-foreground">
-                      Partners will receive daily notifications for the selected products based on your configured settings. 
-                      For FX rates, they will be notified of the rate that will be applied to all transactions the following day.
+                      Partners will receive daily notifications for the FX rates that will be applied to all transactions the following day.
+                      Only selected MTO partners will receive these notifications.
                     </p>
                   </div>
                 </div>
