@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
-import { FXRateCard } from '@/components/dashboard/FXRateCard';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, History } from 'lucide-react';
@@ -61,10 +60,6 @@ export default function Dashboard() {
               </Link>
             </Button>
           </div>
-        </div>
-        
-        <div className="mb-6">
-          <FXRateCard />
         </div>
         
         <div className="mb-6">
