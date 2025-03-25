@@ -337,7 +337,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             </h3>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className={`text-2xl font-bold ${mto.balance < 0 ? 'text-finance-negative' : ''}`}>
+                <p className="text-2xl font-bold">
                   {formatCurrency(mto.balance, mto.currency)}
                 </p>
                 <ValueChange 
