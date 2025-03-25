@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  PieChart, 
   RefreshCw,
   Bell, 
   Settings,
@@ -128,12 +127,6 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               to="/" 
               icon={LayoutDashboard} 
               label="Dashboard" 
-              isCollapsed={isCollapsed} 
-            />
-            <SidebarLink 
-              to="/risk-management" 
-              icon={PieChart} 
-              label="Risk Management" 
               isCollapsed={isCollapsed} 
             />
             <SidebarLink 
