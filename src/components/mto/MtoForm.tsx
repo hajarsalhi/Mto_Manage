@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -82,14 +82,14 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
   const watchIsFxRateEnabled = form.watch("isFxRateEnabled");
   const watchIsReconciliationEnabled = form.watch("isReconciliationEnabled");
   
-  // Update email visibility when checkboxes change
-  form.watch("isFxRateEnabled", (value) => {
-    setShowFxRateEmails(value);
-  });
+  // Update email visibility when checkbox values change
+  useEffect(() => {
+    setShowFxRateEmails(watchIsFxRateEnabled);
+  }, [watchIsFxRateEnabled]);
   
-  form.watch("isReconciliationEnabled", (value) => {
-    setShowReconciliationEmails(value);
-  });
+  useEffect(() => {
+    setShowReconciliationEmails(watchIsReconciliationEnabled);
+  }, [watchIsReconciliationEnabled]);
 
   const handleFormSubmit = (values: MtoFormValues) => {
     onSubmit(values);
