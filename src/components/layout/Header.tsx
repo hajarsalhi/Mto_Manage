@@ -1,13 +1,21 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Bell, Sun, Moon, Menu } from 'lucide-react';
+import { Bell, Sun, Moon, Menu, Euro, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ValueChange } from '../ui-custom/StatusIndicator';
 
 interface HeaderProps {
   toggleSidebar: () => void;
+}
+
+interface FXRate {
+  currency: string;
+  rate: number;
+  change: number;
+  icon: React.ReactNode;
 }
 
 export function Header({ toggleSidebar }: HeaderProps) {
@@ -15,6 +23,20 @@ export function Header({ toggleSidebar }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const [fxRates, setFxRates] = useState<FXRate[]>([
+    {
+      currency: 'EUR',
+      rate: 0.0935,
+      change: 0.24,
+      icon: <Euro className="h-4 w-4" />
+    },
+    {
+      currency: 'USD',
+      rate: 0.0987,
+      change: 0.18,
+      icon: <DollarSign className="h-4 w-4" />
+    }
+  ]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +45,20 @@ export function Header({ toggleSidebar }: HeaderProps) {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Simulate FX rates refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate small random changes in rates
+      setFxRates(prev => prev.map(rate => ({
+        ...rate,
+        rate: parseFloat((rate.rate + (Math.random() * 0.002 - 0.001)).toFixed(4)),
+        change: parseFloat((rate.change + (Math.random() * 0.1 - 0.05)).toFixed(2))
+      })));
+    }, 300000); // 5 minutes
+
+    return () => clearInterval(interval);
   }, []);
 
   const toggleDarkMode = () => {
@@ -57,6 +93,26 @@ export function Header({ toggleSidebar }: HeaderProps) {
         >
           <Menu className="h-5 w-5" />
         </Button>
+
+        {/* FX Rates display */}
+        <div className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-muted/40 rounded-lg">
+          {fxRates.map((rate, index) => (
+            <div key={rate.currency} className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <span>MAD</span>
+                <span>/</span>
+                <div className="flex items-center gap-1">
+                  {rate.icon}
+                  <span>{rate.currency}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="font-semibold">{rate.rate.toFixed(4)}</span>
+                <ValueChange value={rate.change} percentageChange size="sm" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       
       <div className="flex items-center gap-2">
