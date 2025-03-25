@@ -27,9 +27,6 @@ const formSchema = z.object({
   usdRate: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
     message: "Le taux USD doit être un nombre positif",
   }),
-  date: z.string().refine(val => !isNaN(Date.parse(val)), {
-    message: "Veuillez entrer une date valide",
-  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -44,7 +41,6 @@ export default function TransferRates() {
     defaultValues: {
       eurRate: '',
       usdRate: '',
-      date: new Date().toISOString().split('T')[0],
     },
   });
 
@@ -57,14 +53,13 @@ export default function TransferRates() {
       
       toast({
         title: "Cours de virement ajoutés",
-        description: `Les taux EUR (${data.eurRate}) et USD (${data.usdRate}) ont été ajoutés pour le ${new Date(data.date).toLocaleDateString('fr-FR')}.`,
+        description: `Les taux EUR (${data.eurRate}) et USD (${data.usdRate}) ont été ajoutés.`,
         duration: 3000,
       });
       
       form.reset({
         eurRate: '',
         usdRate: '',
-        date: new Date().toISOString().split('T')[0],
       });
     }, 1500);
   };
@@ -104,23 +99,6 @@ export default function TransferRates() {
           <div className="md:max-w-md">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date d'application</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Date d'application des taux de virement
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
                 <FormField
                   control={form.control}
                   name="eurRate"
