@@ -38,12 +38,15 @@ export function RiskMTOCard({
     return "bg-finance-negative";
   };
 
+  // Determine if MTO should be blocked (balance + risk value < 0)
+  const shouldBeBlocked = mto.balance + mto.currentRisk < 0;
+
   return (
     <Card 
       key={mtoId} 
       variant="interactive"
       className={cn(
-        mto.isBlocked ? "border-finance-negative/30" : "border-finance-positive/30 border-2",
+        shouldBeBlocked ? "border-finance-negative/30" : "border-finance-positive/30 border-2",
         isSelected && "ring-2 ring-primary ring-opacity-50"
       )}
       onClick={() => onSelect(mtoId)}
@@ -52,8 +55,8 @@ export function RiskMTOCard({
         <div className="flex justify-between items-center">
           <CardTitle className="text-base">{mto.name}</CardTitle>
           <StatusIndicator 
-            status={mto.isBlocked ? "negative" : "positive"} 
-            label={mto.isBlocked ? "Blocked" : "Active"}
+            status={shouldBeBlocked ? "negative" : "positive"} 
+            label={shouldBeBlocked ? "Blocked" : "Active"}
           />
         </div>
       </CardHeader>
@@ -68,6 +71,7 @@ export function RiskMTOCard({
             <Progress
               value={(mto.currentRisk / mto.maxRisk) * 100}
               className="h-1.5"
+              indicatorClassName="bg-finance-positive"
             />
           </div>
           
@@ -78,13 +82,16 @@ export function RiskMTOCard({
           
           <div className="flex justify-between items-center mt-2">
             <span className="text-sm text-muted-foreground">Balance</span>
-            <span className={cn(
-              "font-medium",
-              mto.balance < 0 ? "text-finance-negative" : "text-finance-positive"
-            )}>
+            <span className="font-medium">
               {formatCurrency(mto.balance, mto.currency)}
             </span>
           </div>
+          
+          {shouldBeBlocked && (
+            <div className="text-xs text-finance-negative mt-1">
+              Balance + Risk Value &lt; 0 (Blocked)
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="pt-2 justify-end">
@@ -93,7 +100,7 @@ export function RiskMTOCard({
           size="sm" 
           className={cn(
             "h-7 text-xs gap-1", 
-            mto.isBlocked 
+            shouldBeBlocked 
               ? "text-primary/80 hover:text-primary" 
               : "text-finance-positive hover:text-finance-positive/80"
           )}

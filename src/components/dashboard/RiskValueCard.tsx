@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -46,11 +47,13 @@ export function RiskValueCard() {
   }, []);
 
   const formatCurrency = (amount: number, currency: string) => {
+    const displayAmount = amount < 0 ? 0 : amount;
+    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(displayAmount);
   };
 
   const calculatePercentage = () => {
@@ -130,6 +133,7 @@ export function RiskValueCard() {
                 <Progress
                   value={calculatePercentage()}
                   className="h-2"
+                  indicatorClassName="bg-finance-positive"
                 />
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Critical: {formatCurrency(riskData.threshold, riskData.currency)}</span>

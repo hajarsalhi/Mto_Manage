@@ -25,7 +25,8 @@ export default function RiskManagement() {
     setEndDate,
     formatCurrency,
     calculatePercentage,
-    getStatusColor
+    getStatusColor,
+    shouldBlockMto
   } = useRiskManagement(mtoData, riskHistoryData);
 
   return (

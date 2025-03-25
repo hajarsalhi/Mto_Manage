@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -41,7 +42,10 @@ export function useRiskManagement(
     if (value in mtoData) {
       const mto = mtoData[value];
       setRiskValue(mto.currentRisk);
-      setIsBlocked(mto.isBlocked);
+      
+      // Check if the MTO should be blocked based on balance + risk value
+      const shouldBeBlocked = shouldBlockMto(mto.balance, mto.currentRisk);
+      setIsBlocked(shouldBeBlocked);
     }
   };
   
@@ -83,8 +87,9 @@ export function useRiskManagement(
       setIsAdjusting(false);
       
       const mto = mtoData[selectedMto];
-      const newBalance = mto.balance + riskValue;
-      const shouldBeBlocked = newBalance < 0;
+      
+      // Check if MTO should be blocked based on the new risk value
+      const shouldBeBlocked = shouldBlockMto(mto.balance, riskValue);
       
       toast({
         title: "Risk value updated",
