@@ -71,6 +71,8 @@ export function MTOList() {
       const balance = Math.random() * 200000 - 50000;
       const riskValue = Math.random() * 60000;
       
+      const isBlocked = balance + riskValue < 0;
+      
       return {
         id: `mto${index + 1}`,
         name: `Partner MTO ${index + 1}`,
@@ -81,7 +83,7 @@ export function MTOList() {
         status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
         decote: 0.015 + Math.random() * 0.02,
         change: Math.random() * 10 - 5,
-        isBlocked: Math.random() > 0.8,
+        isBlocked: isBlocked,
         riskStartDate: startDate,
         riskEndDate: endDate,
         nextRiskValue: nextRiskValue,
@@ -126,9 +128,13 @@ export function MTOList() {
   const handleRiskManagement = (mtoId: string) => {
     navigate(`/risk-management?mtoId=${mtoId}`);
     
+    const mto = mtoList.find(m => m.id === mtoId);
+    
     toast({
       title: "Gestion des risques",
-      description: "Ajustez la valeur de risque pour bloquer ou débloquer ce partenaire.",
+      description: mto && mto.balance + mto.riskValue < 0 
+        ? "Le partenaire est bloqué car la balance + risk value est inférieure à zéro."
+        : "Ajustez la valeur de risque pour bloquer ou débloquer ce partenaire.",
       duration: 3000,
     });
   };
@@ -265,6 +271,9 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     return "bg-finance-positive";
   };
 
+  const combinedValue = mto.balance + mto.riskValue;
+  const isNegative = combinedValue < 0;
+
   return (
     <Card 
       variant="glass" 
@@ -382,7 +391,7 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
             )}
             <p>
               {mto.isBlocked 
-                ? "Les opérations sont bloquées. Ajustez la valeur de risque pour reprendre." 
+                ? "Les opérations sont bloquées car la balance + risk value est inférieure à zéro." 
                 : "La valeur de risque est dans les limites acceptables."}
             </p>
           </div>

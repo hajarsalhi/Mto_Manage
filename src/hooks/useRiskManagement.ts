@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 interface MTOData {
   name: string;
@@ -83,6 +84,8 @@ export function useRiskManagement(
       setIsAdjusting(false);
       
       const mto = mtoData[selectedMto];
+      const newBalance = mto.balance + riskValue;
+      const shouldBeBlocked = newBalance < 0;
       
       toast({
         title: "Risk value updated",
@@ -90,7 +93,17 @@ export function useRiskManagement(
         duration: 3000,
       });
       
-      if (isBlocked && riskValue > mto.currentRisk) {
+      // Update blocking status based on balance + risk value calculation
+      if (shouldBeBlocked && !isBlocked) {
+        setIsBlocked(true);
+        
+        toast({
+          title: "MTO blocked",
+          description: `${mto.name} has been blocked because balance + risk value is less than zero.`,
+          variant: "destructive",
+          duration: 4000,
+        });
+      } else if (!shouldBeBlocked && isBlocked) {
         setIsBlocked(false);
         
         toast({
@@ -124,6 +137,11 @@ export function useRiskManagement(
     return "bg-finance-positive";
   };
 
+  // Helper function to determine if an MTO should be blocked
+  const shouldBlockMto = (balance: number, riskValue: number) => {
+    return balance + riskValue < 0;
+  };
+
   return {
     selectedMto,
     riskValue,
@@ -138,9 +156,7 @@ export function useRiskManagement(
     setEndDate,
     formatCurrency,
     calculatePercentage,
-    getStatusColor
+    getStatusColor,
+    shouldBlockMto
   };
 }
-
-// Add missing import
-import { format } from 'date-fns';
