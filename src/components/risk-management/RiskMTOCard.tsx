@@ -32,7 +32,7 @@ export function RiskMTOCard({
   formatCurrency 
 }: RiskMTOCardProps) {
   const getRiskStatusColor = (currentRisk: number, maxRisk: number) => {
-    const percentage = (currentRisk / maxRisk) * 100;
+    const percentage = (currentRisk / Math.abs(maxRisk)) * 100;
     if (percentage < 30) return "bg-finance-positive";
     if (percentage < 70) return "bg-finance-warning";
     return "bg-finance-negative";
@@ -72,7 +72,7 @@ export function RiskMTOCard({
           
           <div className="space-y-1">
             <Progress
-              value={(mto.currentRisk / actualMaxRisk) * 100}
+              value={(mto.currentRisk / Math.abs(actualMaxRisk)) * 100}
               className="h-1.5"
               indicatorClassName={getRiskStatusColor(mto.currentRisk, actualMaxRisk)}
             />

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -116,13 +117,11 @@ export function useRiskManagement(
   };
   
   const formatCurrency = (amount: number, currency: string) => {
-    const displayAmount = amount < 0 ? 0 : amount;
-    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0
-    }).format(displayAmount);
+    }).format(amount);
   };
   
   const calculatePercentage = () => {
@@ -130,7 +129,7 @@ export function useRiskManagement(
     
     const mto = mtoData[selectedMto];
     const maxRiskValue = calculateMaxRiskValue(mto.balance, riskValue);
-    return (riskValue / maxRiskValue) * 100;
+    return (riskValue / Math.abs(maxRiskValue)) * 100;
   };
   
   const getStatusColor = () => {
