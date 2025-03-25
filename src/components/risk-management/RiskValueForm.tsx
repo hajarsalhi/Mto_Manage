@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
@@ -213,7 +214,7 @@ export function RiskValueForm({
                       {isBlocked ? (
                         <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                       ) : (
-                        <p>Risk value is within acceptable limits. MTO operations are running normally.</p>
+                        <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                       )}
                     </div>
                   </div>
