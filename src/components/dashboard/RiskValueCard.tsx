@@ -60,9 +60,9 @@ export function RiskValueCard() {
 
   const getStatusColor = () => {
     const percentage = calculatePercentage();
-    if (percentage < 30) return "bg-finance-negative";
-    if (percentage < 60) return "bg-finance-warning";
-    return "bg-finance-positive";
+    if (percentage < 30) return "bg-finance-positive";
+    if (percentage < 70) return "bg-finance-warning";
+    return "bg-finance-negative";
   };
 
   return (

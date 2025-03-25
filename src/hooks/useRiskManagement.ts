@@ -131,12 +131,11 @@ export function useRiskManagement(
   
   const getStatusColor = () => {
     const percentage = calculatePercentage();
-    if (percentage < 30) return "bg-finance-negative";
-    if (percentage < 60) return "bg-finance-warning";
-    return "bg-finance-positive";
+    if (percentage < 30) return "bg-finance-positive";
+    if (percentage < 70) return "bg-finance-warning";
+    return "bg-finance-negative";
   };
 
-  // Helper function to determine if an MTO should be blocked
   const shouldBlockMto = (balance: number, riskValue: number) => {
     return balance + riskValue < 0;
   };
