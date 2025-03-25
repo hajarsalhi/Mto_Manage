@@ -1,14 +1,14 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '../ui-custom/StatusIndicator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Plus, TrendingUp, AlertTriangle, Search, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, Plus, TrendingUp, AlertTriangle, Search, SlidersHorizontal, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { format } from 'date-fns';
 import {
   Pagination,
   PaginationContent,
@@ -30,6 +30,10 @@ interface MTOData {
   decote: number;
   change: number;
   isBlocked: boolean;
+  riskStartDate: Date;
+  riskEndDate: Date | null;
+  nextRiskValue: number | null;
+  nextRiskStartDate: Date | null;
 }
 
 export function MTOList() {
@@ -45,18 +49,42 @@ export function MTOList() {
   useEffect(() => {
     setIsLoading(true);
     
-    const mockData: MTOData[] = Array.from({ length: 45 }, (_, index) => ({
-      id: `mto${index + 1}`,
-      name: `Partner MTO ${index + 1}`,
-      currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
-      balance: Math.random() * 200000 - 50000,
-      riskValue: Math.random() * 60000,
-      maxRiskValue: 80000,
-      status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
-      decote: 0.015 + Math.random() * 0.02,
-      change: Math.random() * 10 - 5,
-      isBlocked: Math.random() > 0.8
-    }));
+    const mockData: MTOData[] = Array.from({ length: 45 }, (_, index) => {
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - Math.floor(Math.random() * 6) - 1);
+      
+      let endDate: Date | null = null;
+      if (Math.random() > 0.3) {
+        endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + Math.floor(Math.random() * 6) + 1);
+      }
+      
+      let nextRiskValue: number | null = null;
+      let nextRiskStartDate: Date | null = null;
+      
+      if (Math.random() < 0.3 && endDate) {
+        nextRiskValue = Math.random() * 60000;
+        nextRiskStartDate = new Date(endDate);
+        nextRiskStartDate.setDate(nextRiskStartDate.getDate() + 1);
+      }
+      
+      return {
+        id: `mto${index + 1}`,
+        name: `Partner MTO ${index + 1}`,
+        currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
+        balance: Math.random() * 200000 - 50000,
+        riskValue: Math.random() * 60000,
+        maxRiskValue: 80000,
+        status: ['positive', 'negative', 'warning', 'neutral'][Math.floor(Math.random() * 4)] as 'positive' | 'negative' | 'warning' | 'neutral',
+        decote: 0.015 + Math.random() * 0.02,
+        change: Math.random() * 10 - 5,
+        isBlocked: Math.random() > 0.8,
+        riskStartDate: startDate,
+        riskEndDate: endDate,
+        nextRiskValue: nextRiskValue,
+        nextRiskStartDate: nextRiskStartDate
+      };
+    });
     
     const timer = setTimeout(() => {
       setMtoList(mockData);
@@ -307,9 +335,25 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
                 indicatorClassName={getStatusColor()}
               />
               
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{calculatePercentage().toFixed(0)}% utilisé</span>
+              <div className="flex justify-between items-center text-xs text-muted-foreground mt-1">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>Du: {format(mto.riskStartDate, 'dd/MM/yyyy')}</span>
+                </div>
+                <div>
+                  {mto.riskEndDate ? 
+                    <span>Au: {format(mto.riskEndDate, 'dd/MM/yyyy')}</span> : 
+                    <span>Indéfini</span>
+                  }
+                </div>
               </div>
+              
+              {mto.nextRiskValue && mto.nextRiskStartDate && (
+                <div className="text-xs text-muted-foreground mt-1 pt-1 border-t border-border">
+                  <span className="font-medium">Prochain Risk Value:</span> {formatCurrency(mto.nextRiskValue, mto.currency)}
+                  <span className="ml-1">à partir du {format(mto.nextRiskStartDate, 'dd/MM/yyyy')}</span>
+                </div>
+              )}
             </div>
           </div>
 
