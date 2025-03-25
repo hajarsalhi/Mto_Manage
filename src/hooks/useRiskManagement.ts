@@ -104,7 +104,7 @@ export function useRiskManagement(
         
         toast({
           title: "MTO blocked",
-          description: `${mto.name} has been blocked because the maximum risk value is less than zero.`,
+          description: `${mto.name} has been blocked because the maximum risk value is less than or equal to zero.`,
           variant: "destructive",
           duration: 4000,
         });
@@ -144,9 +144,9 @@ export function useRiskManagement(
     return "bg-finance-negative";
   };
 
-  // Update the blocking logic to check max risk value
+  // Update the blocking logic to check max risk value <= 0
   const shouldBlockMto = (maxRisk: number) => {
-    return maxRisk < 0;
+    return maxRisk <= 0;
   };
 
   return {

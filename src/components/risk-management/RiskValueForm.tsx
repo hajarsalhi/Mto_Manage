@@ -214,9 +214,9 @@ export function RiskValueForm({
                   
                   <div className="mt-6 text-sm text-muted-foreground">
                     {isBlocked ? (
-                      <p>The MTO is blocked because the maximum risk value is less than zero. Adjusting the risk value will allow operations to resume.</p>
+                      <p>The MTO is blocked because the maximum risk value is less than or equal to zero. Adjusting the risk value will allow operations to resume.</p>
                     ) : (
-                      <p>Maintain adequate risk value to prevent operations from being blocked. The system will automatically block operations if the maximum risk value is negative.</p>
+                      <p>Maintain adequate risk value to prevent operations from being blocked. The system will automatically block operations if the maximum risk value is less than or equal to zero.</p>
                     )}
                   </div>
                 </div>

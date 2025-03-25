@@ -300,13 +300,12 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
     }).format(displayAmount);
   };
 
-  const combinedValue = mto.balance + mto.riskValue;
-  const isNegative = combinedValue < 0;
+  const isBlocked = mto.maxRiskValue <= 0;
 
   return (
     <Card 
       variant="glass" 
-      className={`h-full ${mto.isBlocked ? 'border-finance-negative' : !mto.isBlocked ? 'border-finance-positive border-2' : ''} ${mto.isCritical ? 'shadow-md shadow-finance-negative/20' : ''}`}
+      className={`h-full ${isBlocked ? 'border-finance-negative' : !isBlocked ? 'border-finance-positive border-2' : ''} ${mto.isCritical ? 'shadow-md shadow-finance-negative/20' : ''}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2">
@@ -411,13 +410,13 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
           </div>
 
           <div className={`p-3 rounded-lg border text-xs flex items-start gap-2 ${
-            mto.isBlocked ? 
+            isBlocked ? 
               "bg-finance-negative/10 border-finance-negative/20 text-finance-negative" : 
               mto.isCritical ?
               "bg-finance-warning/10 border-finance-warning/20 text-finance-warning" :
               "bg-finance-positive/10 border-finance-positive/20 text-finance-positive"
           }`}>
-            {mto.isBlocked ? (
+            {isBlocked ? (
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
             ) : mto.isCritical ? (
               <AlertTriangle className="h-4 w-4 flex-shrink-0" />
@@ -425,8 +424,8 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
             )}
             <p>
-              {mto.isBlocked 
-                ? "Les opérations sont bloquées car la balance + risk value est inférieure à zéro." 
+              {isBlocked 
+                ? "Les opérations sont bloquées car la valeur maximale de risque est inférieure ou égale à zéro." 
                 : mto.isCritical
                 ? "Le partenaire est en état critique avec une balance ou une risk value limitée."
                 : "La valeur de risque est dans les limites acceptables."}
