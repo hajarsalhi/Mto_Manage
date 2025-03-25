@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -152,7 +153,7 @@ export function RiskValueCard() {
                 )}
                 <div>
                   {isBlocked ? (
-                    <p>MTO operations are currently blocked. Please adjust the Risk Value to resume operations.</p>
+                    <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                   ) : (
                     <p>Risk value is within acceptable limits. MTO operations are running normally.</p>
                   )}
