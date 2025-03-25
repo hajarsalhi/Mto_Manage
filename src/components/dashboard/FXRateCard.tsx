@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { ValueChange } from '../ui-custom/StatusIndicator';
-import { RefreshCw, Bell, Euro, DollarSign } from 'lucide-react';
+import { RefreshCw, Bell, Euro, DollarSign, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 interface CurrencyRate {
   currency: string;
@@ -111,6 +112,17 @@ export function FXRateCard() {
           </CardTitle>
         </div>
         <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="gap-2"
+            asChild
+          >
+            <Link to="/transfer-rates">
+              <PlusCircle className="h-4 w-4" />
+              <span>Ajouter cours de virement</span>
+            </Link>
+          </Button>
           <Button 
             variant="ghost" 
             size="icon" 

@@ -14,6 +14,7 @@ import CompensationUpload from "./pages/CompensationUpload";
 import CompensationValidation from "./pages/CompensationValidation";
 import CompensationHistory from "./pages/CompensationHistory";
 import ActivityHistory from "./pages/ActivityHistory";
+import TransferRates from "./pages/TransferRates";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/compensation-validation" element={<CompensationValidation />} />
           <Route path="/compensation-history" element={<CompensationHistory />} />
           <Route path="/activity-history" element={<ActivityHistory />} />
+          <Route path="/transfer-rates" element={<TransferRates />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
