@@ -139,13 +139,17 @@ export default function Notifications() {
                                         ? "bg-primary/10 border-primary/30" 
                                         : "bg-secondary/30 hover:bg-secondary/50"
                                     )}
-                                    onClick={() => handleProductToggle(product.id)}
                                   >
                                     <Switch 
                                       checked={selectedProducts.includes(product.id)} 
                                       onCheckedChange={() => handleProductToggle(product.id)}
                                     />
-                                    <span className="font-medium">{product.name}</span>
+                                    <span 
+                                      className="font-medium"
+                                      onClick={() => handleProductToggle(product.id)}
+                                    >
+                                      {product.name}
+                                    </span>
                                   </div>
                                 ))}
                               </div>
