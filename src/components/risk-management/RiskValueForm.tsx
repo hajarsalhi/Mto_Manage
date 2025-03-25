@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
@@ -62,7 +61,6 @@ export function RiskValueForm({
 }: RiskValueFormProps) {
   const getActualMaxRisk = () => {
     if (!selectedMto) return 0;
-    // Max risk value is the sum of balance and risk value
     return mtoData[selectedMto].balance + riskValue;
   };
 
@@ -213,7 +211,7 @@ export function RiskValueForm({
                     )}
                     <div>
                       {isBlocked ? (
-                        <p>MTO operations are currently blocked. Adjust the Risk Value to unblock operations.</p>
+                        <p>Prochain Risk Value: Aucun risk value futur configuré</p>
                       ) : (
                         <p>Risk value is within acceptable limits. MTO operations are running normally.</p>
                       )}
