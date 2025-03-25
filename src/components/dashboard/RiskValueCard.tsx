@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ interface RiskValueData {
 export function RiskValueCard() {
   const [riskData, setRiskData] = useState<RiskValueData>({
     currentValue: 75000,
-    maxValue: 100000, // This should be balance + risk value
+    maxValue: 100000,
     threshold: 25000,
     currency: 'EUR',
     status: 'positive',
