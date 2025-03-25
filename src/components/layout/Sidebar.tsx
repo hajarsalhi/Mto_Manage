@@ -9,7 +9,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Upload,
-  Plus
+  Banknote
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -149,9 +149,9 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               isCollapsed={isCollapsed} 
             />
             <SidebarLink 
-              to="/add-mto" 
-              icon={Plus} 
-              label="Ajouter MTO" 
+              to="/transfer-rates" 
+              icon={Banknote} 
+              label="Ajouter cours de virement" 
               isCollapsed={isCollapsed} 
             />
           </div>
