@@ -115,11 +115,13 @@ export function useRiskManagement(
   };
   
   const formatCurrency = (amount: number, currency: string) => {
+    const displayAmount = amount < 0 ? 0 : amount;
+    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(displayAmount);
   };
   
   const calculatePercentage = () => {

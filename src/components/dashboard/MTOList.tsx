@@ -128,11 +128,13 @@ export function MTOList({ showCriticalFirst = false }: MTOListProps) {
   }, [searchTerm, mtoList, showCriticalFirst]);
 
   const formatCurrency = (amount: number, currency: string) => {
+    const displayAmount = amount < 0 ? 0 : amount;
+    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2
-    }).format(amount);
+    }).format(displayAmount);
   };
 
   const handleAddMTO = () => {
@@ -289,11 +291,13 @@ function MTOCard({ mto, onClick, onToggleBlock }: MTOCardProps) {
   };
 
   const formatCurrency = (amount: number, currency: string) => {
+    const displayAmount = amount < 0 ? 0 : amount;
+    
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2
-    }).format(amount);
+    }).format(displayAmount);
   };
 
   const combinedValue = mto.balance + mto.riskValue;

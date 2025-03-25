@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -42,8 +41,9 @@ export default function BalanceCorrections() {
       setCurrentBalance("87650.20");
       setNewBalance("87650.20");
     } else if (value === "ria") {
-      setCurrentBalance("-1240.75");
-      setNewBalance("-1240.75");
+      // Display zero instead of negative value
+      setCurrentBalance("0.00");
+      setNewBalance("0.00");
     }
   };
   
