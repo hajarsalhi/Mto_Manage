@@ -3,28 +3,34 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { ValueChange } from '../ui-custom/StatusIndicator';
-import { RefreshCw, Bell } from 'lucide-react';
+import { RefreshCw, Bell, Euro, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-interface FXRateData {
-  baseCurrency: string;
-  targetCurrency: string;
+interface CurrencyRate {
+  currency: string;
   rate: number;
-  decote: number;
-  effectiveRate: number;
   change: number;
-  updatedAt: string;
+  icon: React.ReactNode;
 }
 
 export function FXRateCard() {
-  const [fxData, setFxData] = useState<FXRateData>({
-    baseCurrency: 'EUR',
-    targetCurrency: 'MAD',
-    rate: 10.897,
-    decote: 0.018,
-    effectiveRate: 10.701,
-    change: 0.24,
+  const [fxData, setFxData] = useState({
+    baseCurrency: 'MAD',
+    rates: [
+      {
+        currency: 'EUR',
+        rate: 0.0935,
+        change: 0.24,
+        icon: <Euro className="h-4 w-4" />
+      },
+      {
+        currency: 'USD',
+        rate: 0.0987,
+        change: 0.18,
+        icon: <DollarSign className="h-4 w-4" />
+      }
+    ],
     updatedAt: '2023-04-15T09:30:00Z'
   });
   
@@ -58,9 +64,20 @@ export function FXRateCard() {
     setTimeout(() => {
       setFxData(prev => ({
         ...prev,
-        rate: 10.912,
-        effectiveRate: 10.715,
-        change: 0.37,
+        rates: [
+          {
+            currency: 'EUR',
+            rate: 0.0942,
+            change: 0.37,
+            icon: <Euro className="h-4 w-4" />
+          },
+          {
+            currency: 'USD',
+            rate: 0.0993,
+            change: 0.25,
+            icon: <DollarSign className="h-4 w-4" />
+          }
+        ],
         updatedAt: new Date().toISOString()
       }));
       
@@ -123,32 +140,28 @@ export function FXRateCard() {
             </div>
           ) : (
             <>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-2xl font-bold tracking-tight">
-                    {fxData.effectiveRate.toFixed(3)}
-                  </h3>
-                  <ValueChange 
-                    value={fxData.change} 
-                    percentageChange 
-                  />
-                </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <span>{fxData.baseCurrency}</span>
-                  <span>/</span>
-                  <span>{fxData.targetCurrency}</span>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Base Rate</p>
-                  <p className="text-base font-medium">{fxData.rate.toFixed(3)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Décote</p>
-                  <p className="text-base font-medium">{(fxData.decote * 100).toFixed(2)}%</p>
-                </div>
+              <div className="grid grid-cols-2 gap-6">
+                {fxData.rates.map((rate, index) => (
+                  <div key={rate.currency} className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-2xl font-bold tracking-tight">
+                        {rate.rate.toFixed(4)}
+                      </h3>
+                      <ValueChange 
+                        value={rate.change} 
+                        percentageChange 
+                      />
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <span>{fxData.baseCurrency}</span>
+                      <span>/</span>
+                      <div className="flex items-center gap-1">
+                        {rate.icon}
+                        <span>{rate.currency}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
               
               <div className="text-xs text-muted-foreground flex items-center justify-between pt-2 border-t border-border">
