@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,8 @@ export function FXRateCard() {
       }
     ],
     updatedAt: '2023-04-15T09:30:00Z',
-    notificationsEnabled: false
+    notificationsEnabled: false,
+    activatedBy: ''
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +100,8 @@ export function FXRateCard() {
     
     setFxData(prev => ({
       ...prev,
-      notificationsEnabled: newState
+      notificationsEnabled: newState,
+      activatedBy: newState ? "Meriem Nassiri" : ""
     }));
     
     toast({
@@ -197,10 +200,15 @@ export function FXRateCard() {
               </div>
               
               {fxData.notificationsEnabled && (
-                <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800 text-xs">
+                <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800 text-xs">
                   <div className="flex items-center gap-2">
                     <BellRing className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    <span className="font-medium text-green-800 dark:text-green-400">Notifications activated</span>
+                    <div>
+                      <span className="font-medium text-green-800 dark:text-green-400">Notifications activated</span>
+                      {fxData.activatedBy && (
+                        <p className="text-muted-foreground mt-0.5">{fxData.activatedBy} a activé les notifications</p>
+                      )}
+                    </div>
                   </div>
                   <span className="text-muted-foreground">Daily at 16:00</span>
                 </div>
