@@ -37,14 +37,16 @@ export function RiskValueCard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
 
-  // Simulate data fetch
+  // Simulate data fetch and check if blocked
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
+      // Determine if blocked based on maxValue
+      setIsBlocked(riskData.maxValue < 0);
       setIsLoading(false);
     }, 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [riskData.maxValue]);
 
   const formatCurrency = (amount: number, currency: string) => {
     const displayAmount = amount < 0 ? 0 : amount;

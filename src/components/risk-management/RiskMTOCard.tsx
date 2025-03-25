@@ -38,8 +38,8 @@ export function RiskMTOCard({
     return "bg-finance-negative";
   };
 
-  // Determine if MTO should be blocked (balance + risk value < 0)
-  const shouldBeBlocked = mto.balance + mto.currentRisk < 0;
+  // Determine if MTO should be blocked (maxRisk < 0)
+  const shouldBeBlocked = mto.maxRisk < 0;
 
   return (
     <Card 
@@ -89,7 +89,7 @@ export function RiskMTOCard({
           
           {shouldBeBlocked && (
             <div className="text-xs text-finance-negative mt-1">
-              Balance + Risk Value &lt; 0 (Blocked)
+              Max Risk Value &lt; 0 (Blocked)
             </div>
           )}
         </div>

@@ -43,8 +43,8 @@ export function useRiskManagement(
       const mto = mtoData[value];
       setRiskValue(mto.currentRisk);
       
-      // Check if the MTO should be blocked based on balance + risk value
-      const shouldBeBlocked = shouldBlockMto(mto.balance, mto.currentRisk);
+      // Check if the MTO should be blocked based on max risk value
+      const shouldBeBlocked = shouldBlockMto(mto.maxRisk);
       setIsBlocked(shouldBeBlocked);
     }
   };
@@ -88,8 +88,9 @@ export function useRiskManagement(
       
       const mto = mtoData[selectedMto];
       
-      // Check if MTO should be blocked based on the new risk value
-      const shouldBeBlocked = shouldBlockMto(mto.balance, riskValue);
+      // Check if MTO should be blocked based on the max risk value
+      // MaxRisk is the maximum negative value allowed (usually 0 or negative)
+      const shouldBeBlocked = shouldBlockMto(mto.maxRisk);
       
       toast({
         title: "Risk value updated",
@@ -97,13 +98,13 @@ export function useRiskManagement(
         duration: 3000,
       });
       
-      // Update blocking status based on balance + risk value calculation
+      // Update blocking status based on max risk value
       if (shouldBeBlocked && !isBlocked) {
         setIsBlocked(true);
         
         toast({
           title: "MTO blocked",
-          description: `${mto.name} has been blocked because balance + risk value is less than zero.`,
+          description: `${mto.name} has been blocked because the maximum risk value is less than zero.`,
           variant: "destructive",
           duration: 4000,
         });
@@ -143,8 +144,9 @@ export function useRiskManagement(
     return "bg-finance-negative";
   };
 
-  const shouldBlockMto = (balance: number, riskValue: number) => {
-    return balance + riskValue < 0;
+  // Update the blocking logic to check max risk value
+  const shouldBlockMto = (maxRisk: number) => {
+    return maxRisk < 0;
   };
 
   return {
