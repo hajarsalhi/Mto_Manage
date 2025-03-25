@@ -89,7 +89,6 @@ export function useRiskManagement(
       const mto = mtoData[selectedMto];
       
       // Check if MTO should be blocked based on the max risk value
-      // MaxRisk is the maximum negative value allowed (usually 0 or negative)
       const shouldBeBlocked = shouldBlockMto(mto.maxRisk);
       
       toast({

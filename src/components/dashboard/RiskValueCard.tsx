@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui-custom/Card';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,7 @@ export function RiskValueCard() {
           </CardTitle>
         </div>
         <StatusIndicator 
-          status={riskData.status} 
+          status={isBlocked ? "negative" : "positive"} 
           pulsate={isBlocked} 
           label={isBlocked ? "Blocked" : "Active"}
         />
@@ -134,7 +135,7 @@ export function RiskValueCard() {
                 <Progress
                   value={calculatePercentage()}
                   className="h-2"
-                  indicatorClassName="bg-finance-positive"
+                  indicatorClassName={getStatusColor()}
                 />
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Critical: {formatCurrency(riskData.threshold, riskData.currency)}</span>
