@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -28,7 +29,6 @@ import { Upload, FileText, AlertCircle, CheckCircle2, Trash2, Check } from 'luci
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
-import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
@@ -51,7 +51,6 @@ export default function CompensationUpload() {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [showValidationButtons, setShowValidationButtons] = useState(false);
-  const [showAlert, setShowAlert] = useState(true);
   const [compensations, setCompensations] = useState<CompensationFile[]>([]);
   const [selectedCompensation, setSelectedCompensation] = useState<CompensationFile | null>(null);
   
@@ -220,8 +219,6 @@ export default function CompensationUpload() {
               Téléchargez les fichiers de compensation des partenaires MTO
             </p>
           </div>
-          
-          {showAlert && <CompensationAlert onClose={() => setShowAlert(false)} />}
           
           <Card className="mb-8">
             <CardHeader>
