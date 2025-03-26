@@ -13,8 +13,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
-import { Upload, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Upload, FileText, AlertCircle, CheckCircle2, Trash2, Check } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
@@ -28,6 +39,7 @@ export default function CompensationUpload() {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(true);
+  const [showValidationButtons, setShowValidationButtons] = useState(false);
   
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -87,37 +99,50 @@ export default function CompensationUpload() {
     setTimeout(() => {
       setIsUploading(false);
       
-      // Randomly succeed or fail for demo purposes
-      const success = Math.random() > 0.3;
+      // Always succeed for this demo
+      setUploadStatus('success');
+      setShowValidationButtons(true);
       
-      if (success) {
-        setUploadStatus('success');
-        toast({
-          title: "Fichier importé avec succès",
-          description: `Le fichier de compensation pour ${mto} a été importé et est prêt pour validation.`,
-          duration: 3000,
-        });
-        
-        // Ajouter un délai pour simuler un chargement puis rediriger vers la page de validation
-        setTimeout(() => {
-          navigate('/compensation-validation');
-        }, 1500);
-      } else {
-        setUploadStatus('error');
-        toast({
-          title: "Erreur d'importation",
-          description: "Le format du fichier est incorrect. Veuillez vérifier le fichier et réessayer.",
-          variant: "destructive",
-          duration: 3000,
-        });
-      }
+      toast({
+        title: "Fichier importé avec succès",
+        description: `Le fichier de compensation pour ${mto} a été importé et est prêt pour validation.`,
+        duration: 3000,
+      });
     }, 2000);
+  };
+  
+  const handleValidate = () => {
+    toast({
+      title: "Compensation validée",
+      description: `La compensation pour ${mto} a été validée avec succès.`,
+      duration: 3000,
+    });
+    
+    // Ajouter un délai pour simuler un chargement puis rediriger vers la page de validation
+    setTimeout(() => {
+      navigate('/compensation-validation');
+    }, 1500);
+  };
+  
+  const handleDelete = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    setUploadStatus('idle');
+    setShowValidationButtons(false);
+    
+    toast({
+      title: "Compensation supprimée",
+      description: "Le fichier de compensation a été supprimé.",
+      variant: "destructive",
+      duration: 3000,
+    });
   };
   
   const resetForm = () => {
     setSelectedFile(null);
     setFilePreview(null);
     setUploadStatus('idle');
+    setShowValidationButtons(false);
   };
 
   return (
@@ -228,6 +253,73 @@ export default function CompensationUpload() {
                     </AlertDescription>
                   </Alert>
                 )}
+                
+                {showValidationButtons && (
+                  <div className="bg-muted/50 p-4 rounded-lg border border-dashed mt-4">
+                    <h3 className="font-medium mb-2">Confirmer l'action</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Veuillez valider ou supprimer ce fichier de compensation. La validation doit être effectuée avant 18h00.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            className="flex-1 border-finance-negative text-finance-negative hover:bg-finance-negative/10"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Supprimer
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Êtes-vous sûr?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Cette action supprimera définitivement le fichier de compensation et ne peut pas être annulée.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={handleDelete}
+                              className="bg-finance-negative text-white hover:bg-finance-negative/90"
+                            >
+                              Supprimer
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            className="flex-1 bg-finance-positive hover:bg-finance-positive/90 text-white"
+                          >
+                            <Check className="mr-2 h-4 w-4" />
+                            Valider
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmer la validation</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Vous êtes sur le point de valider ce fichier de compensation pour {mto}. Cette action appliquera les transactions à la balance du partenaire.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={handleValidate}
+                              className="bg-finance-positive text-white hover:bg-finance-positive/90"
+                            >
+                              Valider
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
             <CardFooter className="flex-col sm:flex-row sm:justify-end gap-2">
@@ -241,7 +333,7 @@ export default function CompensationUpload() {
               </Button>
               <Button 
                 type="button" 
-                disabled={isUploading || !selectedFile || !mto}
+                disabled={isUploading || !selectedFile || !mto || showValidationButtons}
                 className="bg-primary/90 hover:bg-primary text-primary-foreground w-full sm:w-auto"
                 onClick={handleUpload}
               >
