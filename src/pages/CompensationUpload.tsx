@@ -182,6 +182,8 @@ export default function CompensationUpload() {
     }
   };
 
+  const hasValidatedFiles = compensations.some(file => file.status === 'validated');
+
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
@@ -362,12 +364,12 @@ export default function CompensationUpload() {
             </CardFooter>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Valider les compensations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {compensations.length > 0 ? (
+          {hasValidatedFiles && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Compensations validées</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="relative overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -377,11 +379,10 @@ export default function CompensationUpload() {
                         <TableHead>Date</TableHead>
                         <TableHead>Montant</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {compensations.map((file) => (
+                      {compensations.filter(file => file.status === 'validated').map((file) => (
                         <TableRow key={file.id}>
                           <TableCell className="font-medium">
                             <div className="flex items-center gap-2">
@@ -393,84 +394,14 @@ export default function CompensationUpload() {
                           <TableCell>{formatDate(file.uploadDate)}</TableCell>
                           <TableCell>{formatCurrency(file.amount, file.currency)}</TableCell>
                           <TableCell>{getStatusBadge(file.status)}</TableCell>
-                          <TableCell className="text-right">
-                            {file.status === 'pending' && (
-                              <div className="flex items-center justify-end gap-2">
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="border-finance-negative text-finance-negative hover:bg-finance-negative/10"
-                                      onClick={() => setSelectedCompensation(file)}
-                                    >
-                                      <Trash2 className="mr-1 h-4 w-4" />
-                                      Supprimer
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Êtes-vous sûr?</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Cette action supprimera définitivement le fichier de compensation et ne peut pas être annulée.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                      <AlertDialogAction 
-                                        onClick={() => handleDelete()}
-                                        className="bg-finance-negative text-white hover:bg-finance-negative/90"
-                                      >
-                                        Supprimer
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                                
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button 
-                                      className="bg-finance-positive hover:bg-finance-positive/90 text-white"
-                                      size="sm"
-                                      onClick={() => setSelectedCompensation(file)}
-                                    >
-                                      <Check className="mr-1 h-4 w-4" />
-                                      Valider
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Confirmer la validation</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Vous êtes sur le point de valider ce fichier de compensation pour {file.mto}. Cette action appliquera les transactions à la balance du partenaire.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                      <AlertDialogAction 
-                                        onClick={() => handleValidate()}
-                                        className="bg-finance-positive text-white hover:bg-finance-positive/90"
-                                      >
-                                        Valider
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
-                            )}
-                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
-              ) : (
-                <div className="text-center p-8 text-muted-foreground">
-                  Aucune compensation à valider. Importez un fichier pour commencer.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
       
@@ -479,3 +410,4 @@ export default function CompensationUpload() {
     </div>
   );
 }
+
