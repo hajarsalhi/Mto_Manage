@@ -28,7 +28,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Upload, FileText, AlertCircle, CheckCircle2, Trash2, Check } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
 import { useNavigate } from 'react-router-dom';
 
 export default function CompensationUpload() {
@@ -38,7 +37,6 @@ export default function CompensationUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(true);
   const [showValidationButtons, setShowValidationButtons] = useState(false);
   
   const { toast } = useToast();
@@ -162,8 +160,6 @@ export default function CompensationUpload() {
             </p>
           </div>
           
-          {showAlert && <CompensationAlert onClose={() => setShowAlert(false)} />}
-          
           <Card>
             <CardHeader>
               <CardTitle>Importer un fichier de compensation</CardTitle>
@@ -258,7 +254,7 @@ export default function CompensationUpload() {
                   <div className="bg-muted/50 p-4 rounded-lg border border-dashed mt-4">
                     <h3 className="font-medium mb-2">Confirmer l'action</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Veuillez valider ou supprimer ce fichier de compensation. La validation doit être effectuée avant 18h00.
+                      Veuillez valider ou supprimer ce fichier de compensation.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <AlertDialog>
