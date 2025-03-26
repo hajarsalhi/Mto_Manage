@@ -32,7 +32,6 @@ export default function CompensationValidation() {
   const { toast } = useToast();
   
   useEffect(() => {
-    // Mock data
     const mockData: CompensationFile[] = [
       {
         id: "file1",
@@ -101,7 +100,6 @@ export default function CompensationValidation() {
   };
   
   const handleValidate = (file: CompensationFile) => {
-    // Simulate validation
     setTimeout(() => {
       setPendingFiles(prev => 
         prev.map(f => f.id === file.id ? {...f, status: 'validated'} : f)
@@ -116,7 +114,6 @@ export default function CompensationValidation() {
   };
   
   const handleReject = (file: CompensationFile) => {
-    // Simulate rejection
     setTimeout(() => {
       setPendingFiles(prev => 
         prev.map(f => f.id === file.id ? {...f, status: 'rejected'} : f)

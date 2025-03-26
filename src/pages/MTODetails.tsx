@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -70,7 +69,7 @@ export default function MTODetails() {
             <Card variant="glass">
               <CardHeader>
                 <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-                  Solde
+                  Balance
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -89,7 +88,7 @@ export default function MTODetails() {
             <Card variant="glass">
               <CardHeader>
                 <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-                  Valeur Risque
+                  Risk Value
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -217,8 +216,8 @@ export default function MTODetails() {
                       <div>Date</div>
                       <div>Réf</div>
                       <div className="text-right">Montant</div>
-                      <div className="text-right">Solde avant</div>
-                      <div className="text-right">Solde après</div>
+                      <div className="text-right">Balance avant</div>
+                      <div className="text-right">Balance après</div>
                       <div className="text-right">Restant</div>
                     </div>
                     
@@ -291,11 +290,11 @@ export default function MTODetails() {
                           <h3 className="text-sm font-medium mb-1">Paramètres financiers</h3>
                           <div className="rounded-md border p-4 space-y-3">
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Solde initial</span>
+                              <span className="text-muted-foreground">Balance initial</span>
                               <span>{formatCurrency(100000, 'USD')}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Valeur risque actuelle</span>
+                              <span className="text-muted-foreground">Risk Value actuelle</span>
                               <span>{formatCurrency(50000, 'USD')}</span>
                             </div>
                             <div className="flex justify-between text-sm">
