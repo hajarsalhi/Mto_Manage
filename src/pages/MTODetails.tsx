@@ -4,7 +4,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '@/components/ui-custom/StatusIndicator';
-import { ArrowLeft, LineChart, RefreshCw, Edit } from 'lucide-react';
+import { ArrowLeft, LineChart, RefreshCw, Edit, Calendar, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -118,6 +118,39 @@ export default function MTODetails() {
             </Card>
           </div>
           
+          <div className="mb-6">
+            <Card variant="glass">
+              <CardHeader>
+                <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
+                  Last Compensation Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Calendar className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Last compensation received</p>
+                      <p className="text-lg font-semibold">April 12, 2023</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <DollarSign className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Remaining amount</p>
+                      <p className="text-lg font-semibold">{formatCurrency(45230.78, 'USD')}</p>
+                      <p className="text-xs text-muted-foreground">From total: {formatCurrency(75000, 'USD')}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
           <Tabs defaultValue="transactions">
             <TabsList className="mb-6">
               <TabsTrigger value="transactions">Transactions</TabsTrigger>
@@ -179,17 +212,18 @@ export default function MTODetails() {
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
-                    <div className="grid grid-cols-5 p-4 text-sm font-medium border-b">
+                    <div className="grid grid-cols-6 p-4 text-sm font-medium border-b">
                       <div>Date</div>
                       <div>Ref</div>
                       <div className="text-right">Amount</div>
                       <div className="text-right">Balance Before</div>
                       <div className="text-right">Balance After</div>
+                      <div className="text-right">Remaining</div>
                     </div>
                     
                     {Array(5).fill(0).map((_, i) => (
-                      <div key={i} className="grid grid-cols-5 p-4 text-sm border-b last:border-b-0">
-                        <div className="text-muted-foreground">12/04/2023</div>
+                      <div key={i} className="grid grid-cols-6 p-4 text-sm border-b last:border-b-0">
+                        <div className="text-muted-foreground">{i === 0 ? '12/04/2023' : `${10 - i}/04/2023`}</div>
                         <div>COMP{100000 + i}</div>
                         <div className="text-right text-finance-positive">
                           +{formatCurrency(10000 + i * 5000, 'USD')}
@@ -199,6 +233,11 @@ export default function MTODetails() {
                         </div>
                         <div className="text-right">
                           {formatCurrency(110000 - (i * 5000), 'USD')}
+                        </div>
+                        <div className="text-right text-muted-foreground">
+                          {i === 0 ? 
+                            formatCurrency(45230.78, 'USD') : 
+                            formatCurrency(0, 'USD')}
                         </div>
                       </div>
                     ))}
