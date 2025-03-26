@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -44,6 +45,7 @@ export default function CompensationUpload() {
   const [showValidationButtons, setShowValidationButtons] = useState(false);
   const [compensations, setCompensations] = useState<CompensationFile[]>([]);
   const [selectedCompensation, setSelectedCompensation] = useState<CompensationFile | null>(null);
+  const [showValidatedFiles, setShowValidatedFiles] = useState(false);
   
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -103,6 +105,7 @@ export default function CompensationUpload() {
         transactions: Math.floor(Math.random() * 200) + 50,
       };
       
+      setSelectedCompensation(newCompensation);
       setCompensations(prev => [...prev, newCompensation]);
       
       toast({
@@ -116,6 +119,7 @@ export default function CompensationUpload() {
   const handleValidate = () => {
     if (!selectedCompensation) return;
     
+    // Update the compensation status to 'validated'
     setCompensations(prev => 
       prev.map(f => f.id === selectedCompensation.id ? {...f, status: 'validated'} : f)
     );
@@ -126,9 +130,15 @@ export default function CompensationUpload() {
       duration: 3000,
     });
     
-    setTimeout(() => {
-      navigate('/compensation-validation');
-    }, 1500);
+    // Show the validated files section
+    setShowValidatedFiles(true);
+    
+    // Reset upload form
+    setSelectedFile(null);
+    setFilePreview(null);
+    setUploadStatus('idle');
+    setShowValidationButtons(false);
+    setSelectedCompensation(null);
   };
   
   const handleDelete = () => {
@@ -144,6 +154,10 @@ export default function CompensationUpload() {
     });
     
     setSelectedCompensation(null);
+    setSelectedFile(null);
+    setFilePreview(null);
+    setUploadStatus('idle');
+    setShowValidationButtons(false);
   };
   
   const resetForm = () => {
@@ -364,7 +378,7 @@ export default function CompensationUpload() {
             </CardFooter>
           </Card>
           
-          {hasValidatedFiles && (
+          {(hasValidatedFiles && showValidatedFiles) && (
             <Card>
               <CardHeader>
                 <CardTitle>Compensations validées</CardTitle>
@@ -410,4 +424,3 @@ export default function CompensationUpload() {
     </div>
   );
 }
-
