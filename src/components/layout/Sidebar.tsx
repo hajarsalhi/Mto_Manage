@@ -151,7 +151,7 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             <SidebarLink 
               to="/transfer-rates" 
               icon={Banknote} 
-              label="Ajouter cours de virement" 
+              label="Cours de virement" 
               isCollapsed={isCollapsed} 
             />
           </div>
