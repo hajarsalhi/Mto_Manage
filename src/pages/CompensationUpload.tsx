@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -54,6 +53,7 @@ export default function CompensationUpload() {
   const [showValidationButtons, setShowValidationButtons] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
   const [compensations, setCompensations] = useState<CompensationFile[]>([]);
+  const [selectedCompensation, setSelectedCompensation] = useState<CompensationFile | null>(null);
   
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -65,7 +65,6 @@ export default function CompensationUpload() {
     setUploadStatus('idle');
     
     if (file) {
-      // For CSV or txt files, read the first few lines for preview
       if (file.type === 'text/csv' || file.type === 'text/plain' || file.name.endsWith('.csv')) {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -109,15 +108,12 @@ export default function CompensationUpload() {
     
     setIsUploading(true);
     
-    // Simulate upload
     setTimeout(() => {
       setIsUploading(false);
       
-      // Always succeed for this demo
       setUploadStatus('success');
       setShowValidationButtons(true);
       
-      // Add the new compensation to the list
       const newCompensation: CompensationFile = {
         id: `file-${Date.now()}`,
         filename: selectedFile.name,
@@ -139,25 +135,28 @@ export default function CompensationUpload() {
     }, 2000);
   };
   
-  const handleValidate = (file: CompensationFile) => {
+  const handleValidate = () => {
+    if (!selectedCompensation) return;
+    
     setCompensations(prev => 
-      prev.map(f => f.id === file.id ? {...f, status: 'validated'} : f)
+      prev.map(f => f.id === selectedCompensation.id ? {...f, status: 'validated'} : f)
     );
     
     toast({
       title: "Compensation validée",
-      description: `La compensation pour ${file.mto} a été validée avec succès.`,
+      description: `La compensation pour ${selectedCompensation.mto} a été validée avec succès.`,
       duration: 3000,
     });
     
-    // Ajouter un délai pour simuler un chargement puis rediriger vers la page de validation
     setTimeout(() => {
       navigate('/compensation-validation');
     }, 1500);
   };
   
-  const handleDelete = (file: CompensationFile) => {
-    setCompensations(prev => prev.filter(f => f.id !== file.id));
+  const handleDelete = () => {
+    if (!selectedCompensation) return;
+    
+    setCompensations(prev => prev.filter(f => f.id !== selectedCompensation.id));
     
     toast({
       title: "Compensation supprimée",
@@ -165,6 +164,8 @@ export default function CompensationUpload() {
       variant: "destructive",
       duration: 3000,
     });
+    
+    setSelectedCompensation(null);
   };
   
   const resetForm = () => {
@@ -339,7 +340,7 @@ export default function CompensationUpload() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
                             <AlertDialogAction 
-                              onClick={handleDelete}
+                              onClick={() => handleDelete()}
                               className="bg-finance-negative text-white hover:bg-finance-negative/90"
                             >
                               Supprimer
@@ -367,7 +368,7 @@ export default function CompensationUpload() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
                             <AlertDialogAction 
-                              onClick={handleValidate}
+                              onClick={() => handleValidate()}
                               className="bg-finance-positive text-white hover:bg-finance-positive/90"
                             >
                               Valider
@@ -400,7 +401,6 @@ export default function CompensationUpload() {
             </CardFooter>
           </Card>
           
-          {/* Validation Section */}
           <Card>
             <CardHeader>
               <CardTitle>Valider les compensations</CardTitle>
@@ -441,6 +441,7 @@ export default function CompensationUpload() {
                                       variant="outline" 
                                       size="sm"
                                       className="border-finance-negative text-finance-negative hover:bg-finance-negative/10"
+                                      onClick={() => setSelectedCompensation(file)}
                                     >
                                       <Trash2 className="mr-1 h-4 w-4" />
                                       Supprimer
@@ -456,7 +457,7 @@ export default function CompensationUpload() {
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Annuler</AlertDialogCancel>
                                       <AlertDialogAction 
-                                        onClick={() => handleDelete(file)}
+                                        onClick={() => handleDelete()}
                                         className="bg-finance-negative text-white hover:bg-finance-negative/90"
                                       >
                                         Supprimer
@@ -470,6 +471,7 @@ export default function CompensationUpload() {
                                     <Button 
                                       className="bg-finance-positive hover:bg-finance-positive/90 text-white"
                                       size="sm"
+                                      onClick={() => setSelectedCompensation(file)}
                                     >
                                       <Check className="mr-1 h-4 w-4" />
                                       Valider
@@ -485,7 +487,7 @@ export default function CompensationUpload() {
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Annuler</AlertDialogCancel>
                                       <AlertDialogAction 
-                                        onClick={() => handleValidate(file)}
+                                        onClick={() => handleValidate()}
                                         className="bg-finance-positive text-white hover:bg-finance-positive/90"
                                       >
                                         Valider
