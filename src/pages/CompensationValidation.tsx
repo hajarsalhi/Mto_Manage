@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -10,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle2, XCircle, ExternalLink, FileText, ArrowRight, Eye } from 'lucide-react';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
 
 interface CompensationFile {
   id: string;
@@ -20,6 +22,7 @@ interface CompensationFile {
   currency: string;
   status: 'pending' | 'validated' | 'rejected';
   transactions: number;
+  expiresAt?: Date;
 }
 
 export default function CompensationValidation() {
@@ -28,10 +31,37 @@ export default function CompensationValidation() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<CompensationFile | null>(null);
   const [activeTab, setActiveTab] = useState("pending");
+  const [showAlert, setShowAlert] = useState(true);
   
   const { toast } = useToast();
+
+  // Calculer le délai avant expiration pour chaque fichier
+  const calculateTimeRemaining = (file: CompensationFile) => {
+    if (!file.expiresAt) return null;
+    
+    const now = new Date();
+    const expiresAt = new Date(file.expiresAt);
+    const diff = expiresAt.getTime() - now.getTime();
+    
+    // Si déjà expiré
+    if (diff <= 0) return "Expiré";
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${hours}h ${minutes}min`;
+  };
   
   useEffect(() => {
+    // Ajouter expiration time (18h00 aujourd'hui) pour chaque fichier en attente
+    const today = new Date();
+    const expirationDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      18, 0, 0 // 18:00:00
+    );
+    
     const mockData: CompensationFile[] = [
       {
         id: "file1",
@@ -41,7 +71,8 @@ export default function CompensationValidation() {
         amount: 45678.50,
         currency: "EUR",
         status: 'pending',
-        transactions: 238
+        transactions: 238,
+        expiresAt: expirationDate
       },
       {
         id: "file2",
@@ -51,7 +82,8 @@ export default function CompensationValidation() {
         amount: 32450.75,
         currency: "USD",
         status: 'pending',
-        transactions: 176
+        transactions: 176,
+        expiresAt: expirationDate
       },
       {
         id: "file3",
@@ -79,7 +111,30 @@ export default function CompensationValidation() {
       setPendingFiles(mockData);
       setIsLoading(false);
     }, 1500);
-  }, []);
+    
+    // Vérification périodique de l'expiration
+    const expirationCheckInterval = setInterval(() => {
+      const now = new Date();
+      
+      setPendingFiles(files => 
+        files.map(file => {
+          if (file.status === 'pending' && file.expiresAt && new Date(file.expiresAt) <= now) {
+            // Marquer comme rejeté si expiré
+            toast({
+              title: "Compensation expirée",
+              description: `La compensation ${file.filename} a été automatiquement rejetée car non validée avant 18h00.`,
+              variant: "destructive",
+              duration: 5000,
+            });
+            return { ...file, status: 'rejected' };
+          }
+          return file;
+        })
+      );
+    }, 60000); // Vérifier chaque minute
+    
+    return () => clearInterval(expirationCheckInterval);
+  }, [toast]);
 
   const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('fr-FR', {
@@ -163,6 +218,8 @@ export default function CompensationValidation() {
             </p>
           </div>
           
+          {showAlert && <CompensationAlert onClose={() => setShowAlert(false)} />}
+          
           <Card>
             <CardHeader>
               <CardTitle>Fichiers de compensation</CardTitle>
@@ -193,6 +250,7 @@ export default function CompensationValidation() {
                         <TableHead>Montant</TableHead>
                         <TableHead>Transactions</TableHead>
                         <TableHead>Statut</TableHead>
+                        {activeTab === "pending" && <TableHead>Expire dans</TableHead>}
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -210,6 +268,19 @@ export default function CompensationValidation() {
                           <TableCell>{formatCurrency(file.amount, file.currency)}</TableCell>
                           <TableCell>{file.transactions}</TableCell>
                           <TableCell>{getStatusBadge(file.status)}</TableCell>
+                          {activeTab === "pending" && (
+                            <TableCell>
+                              {file.expiresAt && (
+                                <span className={`${
+                                  new Date(file.expiresAt).getTime() - Date.now() < 3600000 
+                                    ? 'text-finance-negative font-medium'
+                                    : ''
+                                }`}>
+                                  {calculateTimeRemaining(file)}
+                                </span>
+                              )}
+                            </TableCell>
+                          )}
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Dialog>
@@ -257,6 +328,18 @@ export default function CompensationValidation() {
                                         {selectedFile && getStatusBadge(selectedFile.status)}
                                       </div>
                                     </div>
+                                    {selectedFile?.status === 'pending' && selectedFile?.expiresAt && (
+                                      <div>
+                                        <p className="text-sm font-medium mb-1">Expire dans</p>
+                                        <p className={`text-sm ${
+                                          new Date(selectedFile.expiresAt).getTime() - Date.now() < 3600000 
+                                            ? 'text-finance-negative font-medium'
+                                            : 'text-muted-foreground'
+                                        }`}>
+                                          {calculateTimeRemaining(selectedFile)}
+                                        </p>
+                                      </div>
+                                    )}
                                   </div>
                                   
                                   <DialogFooter>

@@ -17,6 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Upload, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
+import { useNavigate } from 'react-router-dom';
 
 export default function CompensationUpload() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -25,9 +27,11 @@ export default function CompensationUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(true);
   
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -93,6 +97,11 @@ export default function CompensationUpload() {
           description: `Le fichier de compensation pour ${mto} a été importé et est prêt pour validation.`,
           duration: 3000,
         });
+        
+        // Ajouter un délai pour simuler un chargement puis rediriger vers la page de validation
+        setTimeout(() => {
+          navigate('/compensation-validation');
+        }, 1500);
       } else {
         setUploadStatus('error');
         toast({
@@ -127,6 +136,8 @@ export default function CompensationUpload() {
               Téléchargez les fichiers de compensation des partenaires MTO
             </p>
           </div>
+          
+          {showAlert && <CompensationAlert onClose={() => setShowAlert(false)} />}
           
           <Card>
             <CardHeader>
