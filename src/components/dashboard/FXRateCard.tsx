@@ -22,13 +22,13 @@ export function FXRateCard() {
     rates: [
       {
         currency: 'EUR',
-        rate: 0.0935,
+        rate: 10.69,
         change: 0.24,
         icon: <Euro className="h-4 w-4" />
       },
       {
         currency: 'USD',
-        rate: 0.0987,
+        rate: 10.13,
         change: 0.18,
         icon: <DollarSign className="h-4 w-4" />
       }
@@ -71,13 +71,13 @@ export function FXRateCard() {
         rates: [
           {
             currency: 'EUR',
-            rate: 0.0942,
+            rate: 10.62,
             change: 0.37,
             icon: <Euro className="h-4 w-4" />
           },
           {
             currency: 'USD',
-            rate: 0.0993,
+            rate: 10.07,
             change: 0.25,
             icon: <DollarSign className="h-4 w-4" />
           }
@@ -170,7 +170,7 @@ export function FXRateCard() {
                   <div key={rate.currency} className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h3 className="text-2xl font-bold tracking-tight">
-                        {rate.rate.toFixed(4)}
+                        {rate.rate.toFixed(2)}
                       </h3>
                       <ValueChange 
                         value={rate.change} 
@@ -178,12 +178,12 @@ export function FXRateCard() {
                       />
                     </div>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <span>{fxData.baseCurrency}</span>
-                      <span>/</span>
                       <div className="flex items-center gap-1">
                         {rate.icon}
                         <span>{rate.currency}</span>
                       </div>
+                      <span>/</span>
+                      <span>{fxData.baseCurrency}</span>
                     </div>
                   </div>
                 ))}

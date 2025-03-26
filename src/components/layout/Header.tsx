@@ -28,13 +28,13 @@ export function Header({ toggleSidebar }: HeaderProps) {
   const [fxRates, setFxRates] = useState<FXRate[]>([
     {
       currency: 'EUR',
-      rate: 0.0935,
+      rate: 10.69,
       change: 0.24,
       icon: <Euro className="h-4 w-4" />
     },
     {
       currency: 'USD',
-      rate: 0.0987,
+      rate: 10.13,
       change: 0.18,
       icon: <DollarSign className="h-4 w-4" />
     }
@@ -55,7 +55,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
       // Simulate small random changes in rates
       setFxRates(prev => prev.map(rate => ({
         ...rate,
-        rate: parseFloat((rate.rate + (Math.random() * 0.002 - 0.001)).toFixed(4)),
+        rate: parseFloat((rate.rate + (Math.random() * 0.2 - 0.1)).toFixed(2)),
         change: parseFloat((rate.change + (Math.random() * 0.1 - 0.05)).toFixed(2))
       })));
       setLastUpdated(new Date());
@@ -107,15 +107,15 @@ export function Header({ toggleSidebar }: HeaderProps) {
             {fxRates.map((rate, index) => (
               <div key={rate.currency} className="flex items-center gap-2">
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <span>MAD</span>
-                  <span>/</span>
                   <div className="flex items-center gap-1">
                     {rate.icon}
                     <span>{rate.currency}</span>
                   </div>
+                  <span>/</span>
+                  <span>MAD</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="font-semibold">{rate.rate.toFixed(4)}</span>
+                  <span className="font-semibold">{rate.rate.toFixed(2)}</span>
                   <ValueChange value={rate.change} percentageChange size="sm" />
                 </div>
               </div>
