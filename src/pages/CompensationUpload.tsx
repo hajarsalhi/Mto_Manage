@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -6,13 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -46,7 +38,6 @@ interface CompensationFile {
 export default function CompensationUpload() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [mto, setMto] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -80,25 +71,11 @@ export default function CompensationUpload() {
     }
   };
   
-  const handleMtoChange = (value: string) => {
-    setMto(value);
-  };
-  
   const handleUpload = () => {
     if (!selectedFile) {
       toast({
         title: "Erreur",
         description: "Veuillez sélectionner un fichier à importer.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-    
-    if (!mto) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner un partenaire MTO.",
         variant: "destructive",
         duration: 3000,
       });
@@ -113,10 +90,12 @@ export default function CompensationUpload() {
       setUploadStatus('success');
       setShowValidationButtons(true);
       
+      const defaultMto = "Remitly";
+      
       const newCompensation: CompensationFile = {
         id: `file-${Date.now()}`,
         filename: selectedFile.name,
-        mto: mto,
+        mto: defaultMto,
         uploadDate: new Date().toISOString(),
         amount: Math.floor(Math.random() * 50000) + 10000,
         currency: "EUR",
@@ -128,7 +107,7 @@ export default function CompensationUpload() {
       
       toast({
         title: "Fichier importé avec succès",
-        description: `Le fichier de compensation pour ${mto} a été importé et est prêt pour validation.`,
+        description: `Le fichier de compensation a été importé et est prêt pour validation.`,
         duration: 3000,
       });
     }, 2000);
@@ -226,21 +205,6 @@ export default function CompensationUpload() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4 md:space-y-6">
-                <div className="form-group">
-                  <Label htmlFor="mto">Partenaire MTO</Label>
-                  <Select value={mto} onValueChange={handleMtoChange}>
-                    <SelectTrigger id="mto" className="w-full mt-2">
-                      <SelectValue placeholder="Sélectionner un partenaire MTO" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="remitly">Remitly</SelectItem>
-                      <SelectItem value="westernunion">Western Union</SelectItem>
-                      <SelectItem value="moneygram">MoneyGram</SelectItem>
-                      <SelectItem value="ria">Ria Money Transfer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
                 <div className="space-y-3 md:space-y-4">
                   <Label htmlFor="file">Fichier de compensation</Label>
                   <div 
@@ -359,7 +323,7 @@ export default function CompensationUpload() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer la validation</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Vous êtes sur le point de valider ce fichier de compensation pour {mto}. Cette action appliquera les transactions à la balance du partenaire.
+                              Vous êtes sur le point de valider ce fichier de compensation. Cette action appliquera les transactions à la balance du partenaire.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -389,7 +353,7 @@ export default function CompensationUpload() {
               </Button>
               <Button 
                 type="button" 
-                disabled={isUploading || !selectedFile || !mto || showValidationButtons}
+                disabled={isUploading || !selectedFile || showValidationButtons}
                 className="bg-primary/90 hover:bg-primary text-primary-foreground w-full sm:w-auto"
                 onClick={handleUpload}
               >
