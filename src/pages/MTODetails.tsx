@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -30,8 +31,8 @@ export default function MTODetails() {
   
   const handleEdit = () => {
     toast({
-      title: "Edit mode",
-      description: "MTO editing will be available in the next update.",
+      title: "Mode édition",
+      description: "L'édition des MTOs sera disponible dans la prochaine mise à jour.",
       duration: 3000,
     });
   };
@@ -57,10 +58,10 @@ export default function MTODetails() {
             <div>
               <h1 className="heading-xl flex items-center gap-3">
                 Western Union
-                <StatusIndicator status="positive" label="Active" />
+                <StatusIndicator status="positive" label="Actif" />
               </h1>
               <p className="text-muted-foreground mt-1">
-                MTO partner details and transactions
+                Détails du partenaire MTO et transactions
               </p>
             </div>
           </div>
@@ -69,7 +70,7 @@ export default function MTODetails() {
             <Card variant="glass">
               <CardHeader>
                 <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-                  Balance
+                  Solde
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -88,7 +89,7 @@ export default function MTODetails() {
             <Card variant="glass">
               <CardHeader>
                 <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-                  Risk Value
+                  Valeur Risque
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -96,7 +97,7 @@ export default function MTODetails() {
                   {formatCurrency(50000, 'USD')}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Last adjusted on 15/04/2023
+                  Dernière modification le 15/04/2023
                 </p>
               </CardContent>
             </Card>
@@ -112,7 +113,7 @@ export default function MTODetails() {
                   1.5%
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Applied to all transactions
+                  Appliquée à toutes les transactions
                 </p>
               </CardContent>
             </Card>
@@ -122,7 +123,7 @@ export default function MTODetails() {
             <Card variant="glass">
               <CardHeader>
                 <CardTitle className="text-muted-foreground tracking-wide text-sm uppercase font-medium">
-                  Last Compensation Summary
+                  Résumé de la dernière compensation
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -132,8 +133,8 @@ export default function MTODetails() {
                       <Calendar className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Last compensation received</p>
-                      <p className="text-lg font-semibold">April 12, 2023</p>
+                      <p className="text-sm text-muted-foreground">Dernière compensation reçue</p>
+                      <p className="text-lg font-semibold">12 avril 2023</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -141,9 +142,9 @@ export default function MTODetails() {
                       <DollarSign className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Remaining amount</p>
+                      <p className="text-sm text-muted-foreground">Montant restant</p>
                       <p className="text-lg font-semibold">{formatCurrency(45230.78, 'USD')}</p>
-                      <p className="text-xs text-muted-foreground">From total: {formatCurrency(75000, 'USD')}</p>
+                      <p className="text-xs text-muted-foreground">Du total: {formatCurrency(75000, 'USD')}</p>
                     </div>
                   </div>
                 </div>
@@ -155,30 +156,30 @@ export default function MTODetails() {
             <TabsList className="mb-6">
               <TabsTrigger value="transactions">Transactions</TabsTrigger>
               <TabsTrigger value="compensations">Compensations</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="settings">Paramètres</TabsTrigger>
             </TabsList>
             
             <TabsContent value="transactions" className="animate-fade-in">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Recent Transactions</CardTitle>
+                    <CardTitle>Transactions récentes</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Latest transactions for this MTO
+                      Dernières transactions pour ce MTO
                     </p>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2">
                     <RefreshCw className="h-4 w-4" />
-                    <span>Refresh</span>
+                    <span>Actualiser</span>
                   </Button>
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
                     <div className="grid grid-cols-4 p-4 text-sm font-medium border-b">
                       <div>Date</div>
-                      <div>Ref</div>
-                      <div className="text-right">Amount</div>
-                      <div className="text-right">FX Rate</div>
+                      <div>Réf</div>
+                      <div className="text-right">Montant</div>
+                      <div className="text-right">Taux de change</div>
                     </div>
                     
                     {Array(5).fill(0).map((_, i) => (
@@ -196,7 +197,7 @@ export default function MTODetails() {
                 <CardFooter className="justify-center">
                   <Button variant="outline" size="sm" className="gap-2">
                     <LineChart className="h-4 w-4" />
-                    <span>View All Transactions</span>
+                    <span>Voir toutes les transactions</span>
                   </Button>
                 </CardFooter>
               </Card>
@@ -205,20 +206,20 @@ export default function MTODetails() {
             <TabsContent value="compensations" className="animate-fade-in">
               <Card>
                 <CardHeader>
-                  <CardTitle>Compensation History</CardTitle>
+                  <CardTitle>Historique des compensations</CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Recent compensation operations
+                    Opérations de compensation récentes
                   </p>
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
                     <div className="grid grid-cols-6 p-4 text-sm font-medium border-b">
                       <div>Date</div>
-                      <div>Ref</div>
-                      <div className="text-right">Amount</div>
-                      <div className="text-right">Balance Before</div>
-                      <div className="text-right">Balance After</div>
-                      <div className="text-right">Remaining</div>
+                      <div>Réf</div>
+                      <div className="text-right">Montant</div>
+                      <div className="text-right">Solde avant</div>
+                      <div className="text-right">Solde après</div>
+                      <div className="text-right">Restant</div>
                     </div>
                     
                     {Array(5).fill(0).map((_, i) => (
@@ -250,14 +251,14 @@ export default function MTODetails() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>MTO Settings</CardTitle>
+                    <CardTitle>Paramètres du MTO</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Configuration and parameters
+                      Configuration et paramètres
                     </p>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2" onClick={handleEdit}>
                     <Edit className="h-4 w-4" />
-                    <span>Edit</span>
+                    <span>Modifier</span>
                   </Button>
                 </CardHeader>
                 <CardContent>
@@ -265,36 +266,36 @@ export default function MTODetails() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div>
-                          <h3 className="text-sm font-medium mb-1">MTO Information</h3>
+                          <h3 className="text-sm font-medium mb-1">Informations MTO</h3>
                           <div className="rounded-md border p-4 space-y-3">
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Name</span>
+                              <span className="text-muted-foreground">Nom</span>
                               <span>Western Union</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Currency</span>
+                              <span className="text-muted-foreground">Devise</span>
                               <span>USD</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Created on</span>
+                              <span className="text-muted-foreground">Créé le</span>
                               <span>01/01/2022</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Status</span>
-                              <StatusIndicator status="positive" label="Active" />
+                              <span className="text-muted-foreground">Statut</span>
+                              <StatusIndicator status="positive" label="Actif" />
                             </div>
                           </div>
                         </div>
                         
                         <div>
-                          <h3 className="text-sm font-medium mb-1">Financial Parameters</h3>
+                          <h3 className="text-sm font-medium mb-1">Paramètres financiers</h3>
                           <div className="rounded-md border p-4 space-y-3">
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Initial Balance</span>
+                              <span className="text-muted-foreground">Solde initial</span>
                               <span>{formatCurrency(100000, 'USD')}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Current Risk Value</span>
+                              <span className="text-muted-foreground">Valeur risque actuelle</span>
                               <span>{formatCurrency(50000, 'USD')}</span>
                             </div>
                             <div className="flex justify-between text-sm">
@@ -307,37 +308,37 @@ export default function MTODetails() {
                       
                       <div className="space-y-4">
                         <div>
-                          <h3 className="text-sm font-medium mb-1">Notification Settings</h3>
+                          <h3 className="text-sm font-medium mb-1">Paramètres de notification</h3>
                           <div className="rounded-md border p-4 space-y-3">
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">FX Rate notifications</span>
+                              <span className="text-muted-foreground">Notifications des taux de change</span>
                               <Badge>Email</Badge>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Notification time</span>
+                              <span className="text-muted-foreground">Heure de notification</span>
                               <span>16:00</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Recipients</span>
+                              <span className="text-muted-foreground">Destinataires</span>
                               <span>finance@westernunion.com</span>
                             </div>
                           </div>
                         </div>
                         
                         <div>
-                          <h3 className="text-sm font-medium mb-1">Security Settings</h3>
+                          <h3 className="text-sm font-medium mb-1">Paramètres de sécurité</h3>
                           <div className="rounded-md border p-4 space-y-3">
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Last modified</span>
+                              <span className="text-muted-foreground">Dernière modification</span>
                               <span>15/03/2023</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">Modified by</span>
+                              <span className="text-muted-foreground">Modifié par</span>
                               <span>admin@cashplus.ma</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">API Access</span>
-                              <Badge>Enabled</Badge>
+                              <span className="text-muted-foreground">Accès API</span>
+                              <Badge>Activé</Badge>
                             </div>
                           </div>
                         </div>
