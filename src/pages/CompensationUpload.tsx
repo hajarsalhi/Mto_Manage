@@ -29,6 +29,20 @@ import { Upload, FileText, AlertCircle, CheckCircle2, Trash2, Check } from 'luci
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
+import { CompensationAlert } from '@/components/ui-custom/CompensationAlert';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+
+interface CompensationFile {
+  id: string;
+  filename: string;
+  mto: string;
+  uploadDate: string;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'validated' | 'rejected';
+  transactions: number;
+}
 
 export default function CompensationUpload() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -38,6 +52,8 @@ export default function CompensationUpload() {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [showValidationButtons, setShowValidationButtons] = useState(false);
+  const [showAlert, setShowAlert] = useState(true);
+  const [compensations, setCompensations] = useState<CompensationFile[]>([]);
   
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -101,6 +117,20 @@ export default function CompensationUpload() {
       setUploadStatus('success');
       setShowValidationButtons(true);
       
+      // Add the new compensation to the list
+      const newCompensation: CompensationFile = {
+        id: `file-${Date.now()}`,
+        filename: selectedFile.name,
+        mto: mto,
+        uploadDate: new Date().toISOString(),
+        amount: Math.floor(Math.random() * 50000) + 10000,
+        currency: "EUR",
+        status: 'pending',
+        transactions: Math.floor(Math.random() * 200) + 50,
+      };
+      
+      setCompensations(prev => [...prev, newCompensation]);
+      
       toast({
         title: "Fichier importé avec succès",
         description: `Le fichier de compensation pour ${mto} a été importé et est prêt pour validation.`,
@@ -109,10 +139,14 @@ export default function CompensationUpload() {
     }, 2000);
   };
   
-  const handleValidate = () => {
+  const handleValidate = (file: CompensationFile) => {
+    setCompensations(prev => 
+      prev.map(f => f.id === file.id ? {...f, status: 'validated'} : f)
+    );
+    
     toast({
       title: "Compensation validée",
-      description: `La compensation pour ${mto} a été validée avec succès.`,
+      description: `La compensation pour ${file.mto} a été validée avec succès.`,
       duration: 3000,
     });
     
@@ -122,11 +156,8 @@ export default function CompensationUpload() {
     }, 1500);
   };
   
-  const handleDelete = () => {
-    setSelectedFile(null);
-    setFilePreview(null);
-    setUploadStatus('idle');
-    setShowValidationButtons(false);
+  const handleDelete = (file: CompensationFile) => {
+    setCompensations(prev => prev.filter(f => f.id !== file.id));
     
     toast({
       title: "Compensation supprimée",
@@ -141,6 +172,35 @@ export default function CompensationUpload() {
     setFilePreview(null);
     setUploadStatus('idle');
     setShowValidationButtons(false);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(dateString));
+  };
+  
+  const formatCurrency = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2
+    }).format(amount);
+  };
+  
+  const getStatusBadge = (status: CompensationFile['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline" className="bg-muted">En attente</Badge>;
+      case 'validated':
+        return <Badge variant="outline" className="bg-finance-positive/20 text-finance-positive border-finance-positive/30">Validée</Badge>;
+      case 'rejected':
+        return <Badge variant="outline" className="bg-finance-negative/20 text-finance-negative border-finance-negative/30">Rejetée</Badge>;
+    }
   };
 
   return (
@@ -160,7 +220,9 @@ export default function CompensationUpload() {
             </p>
           </div>
           
-          <Card>
+          {showAlert && <CompensationAlert onClose={() => setShowAlert(false)} />}
+          
+          <Card className="mb-8">
             <CardHeader>
               <CardTitle>Importer un fichier de compensation</CardTitle>
             </CardHeader>
@@ -336,6 +398,115 @@ export default function CompensationUpload() {
                 {isUploading ? "Importation en cours..." : "Importer"}
               </Button>
             </CardFooter>
+          </Card>
+          
+          {/* Validation Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Valider les compensations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {compensations.length > 0 ? (
+                <div className="relative overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fichier</TableHead>
+                        <TableHead>MTO</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Montant</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {compensations.map((file) => (
+                        <TableRow key={file.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-muted-foreground" />
+                              <span className="truncate max-w-[180px]">{file.filename}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{file.mto}</TableCell>
+                          <TableCell>{formatDate(file.uploadDate)}</TableCell>
+                          <TableCell>{formatCurrency(file.amount, file.currency)}</TableCell>
+                          <TableCell>{getStatusBadge(file.status)}</TableCell>
+                          <TableCell className="text-right">
+                            {file.status === 'pending' && (
+                              <div className="flex items-center justify-end gap-2">
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      className="border-finance-negative text-finance-negative hover:bg-finance-negative/10"
+                                    >
+                                      <Trash2 className="mr-1 h-4 w-4" />
+                                      Supprimer
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Êtes-vous sûr?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Cette action supprimera définitivement le fichier de compensation et ne peut pas être annulée.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => handleDelete(file)}
+                                        className="bg-finance-negative text-white hover:bg-finance-negative/90"
+                                      >
+                                        Supprimer
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                                
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button 
+                                      className="bg-finance-positive hover:bg-finance-positive/90 text-white"
+                                      size="sm"
+                                    >
+                                      <Check className="mr-1 h-4 w-4" />
+                                      Valider
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Confirmer la validation</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Vous êtes sur le point de valider ce fichier de compensation pour {file.mto}. Cette action appliquera les transactions à la balance du partenaire.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => handleValidate(file)}
+                                        className="bg-finance-positive text-white hover:bg-finance-positive/90"
+                                      >
+                                        Valider
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="text-center p-8 text-muted-foreground">
+                  Aucune compensation à valider. Importez un fichier pour commencer.
+                </div>
+              )}
+            </CardContent>
           </Card>
         </div>
       </main>
