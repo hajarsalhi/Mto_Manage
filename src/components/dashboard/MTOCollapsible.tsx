@@ -156,6 +156,19 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
       duration: 3000,
     });
   };
+  
+  const handleViewDetails = (mtoId: string) => {
+    // Redirect to MTO details page instead of risk management
+    navigate('/mto-details');
+    
+    const mto = mtoList.find(m => m.id === mtoId);
+    
+    toast({
+      title: "Détails du partenaire",
+      description: "Affichage des détails du partenaire MTO, des transactions et de l'historique des compensations.",
+      duration: 3000,
+    });
+  };
 
   const toggleItem = (id: string) => {
     setOpenItems(prev => ({
@@ -354,7 +367,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRiskManagement(mto.id);
+                        handleViewDetails(mto.id);
                       }}
                       className="mr-2"
                     >
