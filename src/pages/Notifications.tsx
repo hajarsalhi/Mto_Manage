@@ -207,7 +207,7 @@ export default function Notifications() {
                 <div className="font-medium">Source</div>
                 
                 {currentRates.map((rate) => (
-                  <React.Fragment key={rate.currency}>
+                  <div key={rate.currency}>
                     <div className="py-2">{rate.currency}</div>
                     <div className="py-2">{rate.rate.toFixed(4)}</div>
                     <div className="py-2 flex justify-between items-center">
@@ -216,7 +216,7 @@ export default function Notifications() {
                         {format(rate.updatedAt, "HH:mm:ss")}
                       </span>
                     </div>
-                  </React.Fragment>
+                  </div>
                 ))}
               </div>
             </CardContent>

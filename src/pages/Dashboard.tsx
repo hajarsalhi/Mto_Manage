@@ -4,17 +4,18 @@ import { Layout } from '@/components/layout/Layout';
 import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, History, Bell } from 'lucide-react';
+import { RefreshCw, History, Bell, ChevronsRight, ChevronsLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
   const { toast } = useToast();
   
   const toggleNotifications = () => {
+    console.log("Toggling notifications:", !showNotifications);
     setShowNotifications(!showNotifications);
   };
 
@@ -77,20 +78,28 @@ export default function Dashboard() {
           </div>
 
           {/* Notifications Panel */}
-          <div className={`flex flex-col gap-4 transition-all duration-300 ${showNotifications ? 'w-72' : 'w-0 opacity-0'} relative`}>
-            <div className="flex items-center justify-between p-2 bg-background rounded-lg border border-border">
-              <button
-                onClick={toggleNotifications}
-                className="p-1 hover:bg-accent rounded-full transition-colors flex items-center justify-center"
-              >
-                <Bell className="h-5 w-5 text-primary" />
-              </button>
-              <span className="text-sm font-medium">Notifications</span>
-            </div>
-            <div className="flex flex-col gap-4">
-              <RecentActivity />
-            </div>
+        <div className="relative flex flex-col items-end gap-4">
+          {/* Always visible toggle button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleNotifications}
+            className="z-50  text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent"
+          >
+            <Bell className="h-4 w-4" />
+          </Button>
+
+          {/* This container collapses */}
+          <div
+            className={cn(
+              "transition-all duration-300 overflow-hidden",
+              showNotifications ? "w-72 opacity-100" : "w-0 opacity-0"
+            )}
+          >
+            <RecentActivity />
           </div>
+        </div>
+
         </div>
       </div>
       
