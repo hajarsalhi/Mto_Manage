@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui-custom/Card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatusIndicator } from '../ui-custom/StatusIndicator';
 import { useNavigate } from 'react-router-dom';
 import { Clock, ArrowUpDown, AlertTriangle, File, Wallet, RefreshCw } from 'lucide-react';
@@ -165,12 +166,78 @@ export function RecentActivity() {
       <CardContent>
         <Tabs defaultValue="tout" className="mb-4" onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-6 mb-4">
-            <TabsTrigger value="tout">Tout</TabsTrigger>
-            <TabsTrigger value="balance">Soldes</TabsTrigger>
-            <TabsTrigger value="risk">Risk Value</TabsTrigger>
-            <TabsTrigger value="compensation">Compensations</TabsTrigger>
-            <TabsTrigger value="fx">Taux</TabsTrigger>
-            <TabsTrigger value="system">Système</TabsTrigger>
+            <TabsTrigger value="tout">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Clock className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Tout</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
+            <TabsTrigger value="balance">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Wallet className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Balance</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
+            <TabsTrigger value="risk">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <AlertTriangle className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Risk</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
+            <TabsTrigger value="compensation">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <File className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Compensation</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
+            <TabsTrigger value="fx">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <ArrowUpDown className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>FX rate</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
+            <TabsTrigger value="system">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <RefreshCw className="h-4 w-4 size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>System</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </TabsTrigger>
           </TabsList>
         </Tabs>
         

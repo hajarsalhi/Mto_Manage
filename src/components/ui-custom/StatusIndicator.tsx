@@ -77,7 +77,7 @@ export function ValueChange({
   return (
     <div 
       className={cn(
-        "flex items-center gap-1",
+        "flex items-center justify-end gap-1",
         isPositive ? "text-finance-positive" : isNeutral ? "text-finance-neutral" : "text-finance-negative",
         size === 'sm' && "text-xs",
         size === 'lg' && "text-base font-semibold",

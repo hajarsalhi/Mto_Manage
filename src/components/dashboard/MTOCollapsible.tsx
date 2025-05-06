@@ -181,8 +181,8 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
   const hasCriticalMTOs = criticalMTOs.length > 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+    <div className="w-full">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
         <div>
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -211,41 +211,40 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {isLoading ? (
           Array(4).fill(0).map((_, i) => (
-            <div key={i} className="animate-pulse h-16">
-              <div className="h-full bg-secondary rounded-lg w-full"></div>
+            <div key={i} className="animate-pulse">
+              <div className="h-16 bg-secondary rounded-lg"></div>
             </div>
           ))
         ) : (
           <>
             {filteredList.map((mto) => (
-              <Collapsible
-                key={mto.id}
-                open={openItems[mto.id]}
-                onOpenChange={() => toggleItem(mto.id)}
-                className={`rounded-lg border ${
-                  mto.isCritical 
-                    ? 'border-finance-negative/30 shadow-sm shadow-finance-negative/20' 
-                    : mto.isBlocked 
-                      ? 'border-finance-negative/30' 
-                      : 'border-finance-positive/30'
-                }`}
-              >
-                <CollapsibleTrigger className="w-full flex items-center justify-between p-4 rounded-lg hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <StatusIndicator 
-                      status={mto.isCritical ? "negative" : mto.status} 
-                      pulsate={mto.isBlocked || mto.isCritical}
-                    />
+              <div key={mto.id} className="w-full">
+                <Collapsible
+                  open={openItems[mto.id]}
+                  onOpenChange={() => toggleItem(mto.id)}
+                  className={`rounded-lg border ${
+                    mto.isCritical 
+                      ? 'border-finance-negative/30 shadow-sm shadow-finance-negative/20' 
+                      : mto.isBlocked 
+                        ? 'border-finance-negative/30' 
+                        : 'border-finance-positive/30'
+                  }`}
+                >
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border-b hover:bg-accent hover:text-accent-foreground relative">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3">
+                      <StatusIndicator 
+                        status={mto.isCritical ? "negative" : mto.status} 
+                        pulsate={mto.isBlocked || mto.isCritical}
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{mto.name}</span>
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{mto.name}</span>
-                      {mto.isCritical && (
-                        <Badge variant="outline" className="ml-2 bg-finance-negative/10 text-finance-negative border-finance-negative">
-                          Critique
-                        </Badge>
-                      )}
                       <Badge 
                         variant={mto.isBlocked ? "destructive" : "outline"} 
                         className={`font-normal ${!mto.isBlocked ? 'bg-finance-positive/10 text-finance-positive border-finance-positive' : ''}`}
@@ -256,10 +255,19 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <div className="text-sm font-semibold">Balance: {formatCurrency(mto.balance, mto.currency)}</div>
+                      <div className="text-sm font-semibold">Balance: {formatCurrency(mto.balance, mto.currency)}
+                          <div className="flex items-right justify-end gap-1 text-xs text-right">  
+                            <ValueChange 
+                              value={mto.change} 
+                              percentageChange 
+                              size="sm"
+                            />
+                          </div>
+                      </div>
                       <div className="text-xs text-muted-foreground">Risk Value: {formatCurrency(mto.riskValue, mto.currency)}</div>
                     </div>
                     {openItems[mto.id] ? (
+                      
                       <ChevronUp className="h-5 w-5 text-muted-foreground" />
                     ) : (
                       <ChevronDown className="h-5 w-5 text-muted-foreground" />
@@ -268,37 +276,28 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                 </CollapsibleTrigger>
 
                 <CollapsibleContent className="p-4 pt-0 border-t">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
-                          Real Time Balance
-                        </h3>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <p className="text-2xl font-bold">
-                              {formatCurrency(mto.balance, mto.currency)}
-                            </p>
-                            <ValueChange 
-                              value={mto.change} 
-                              percentageChange 
-                              size="sm"
-                            />
-                          </div>
+                  <div className="gap-6 py-4">
+                    
+
+                    <div className="space-y-2">
+                      <div className='grid grid-cols-2 gap-2 items-center'>
+                        <div className='flex items-center gap-2'>
+                          <h4 className="text-sm text-muted-foreground  tracking-wide font-medium">
+                            Risk Value
+                          </h4>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <h4 className="text-sm text-muted-foreground tracking-wide font-medium">
+                            Décote :
+                          </h4>
                           <Badge 
-                            variant="outline" 
-                            className="text-xs font-normal border-muted text-muted-foreground"
-                          >
-                            {mto.decote * 100}% décote
+                              variant="outline" 
+                              className="text-xs font-normal border-muted text-muted-foreground"
+                            >
+                              {(mto.decote * 100).toFixed(2)}% 
                           </Badge>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
-                        Risk Value
-                      </h3>
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
                           <p className="text-xl font-semibold">
@@ -387,10 +386,10 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                   </div>
                 </CollapsibleContent>
               </Collapsible>
-            ))}
-          </>
-        )}
-      </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
-  );
-}
+  </div>
+  );}

@@ -4,14 +4,20 @@ import { Layout } from '@/components/layout/Layout';
 import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, History } from 'lucide-react';
+import { RefreshCw, History, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(true);
   const { toast } = useToast();
   
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+
   const handleRefresh = () => {
     setIsLoading(true);
     
@@ -29,7 +35,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="p-6 md:p-10 max-w-7xl animate-scale-in">
+      <div className="p-6 md:p-10 max-w-screen animate-scale-in">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="heading-xl">Tableau de bord</h1>
@@ -61,13 +67,30 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
-        
-        <div className="mb-6">
-          <MTOCollapsible showCriticalFirst={true} />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-6">
-          <RecentActivity />
+        <div className="flex flex-row gap-3 w-full">
+
+          {/* MTO Cards Container */}
+          <div className={`flex gap-2 transition-all duration-300 ${showNotifications ? 'w-full max-w-2/3' : 'max-w-full'}`}>
+            <div className="grid grid-cols-1 gap-6">
+              <MTOCollapsible showCriticalFirst={true} />
+            </div>
+          </div>
+
+          {/* Notifications Panel */}
+          <div className={`flex flex-col gap-4 transition-all duration-300 ${showNotifications ? 'w-72' : 'w-0 opacity-0'} relative`}>
+            <div className="flex items-center justify-between p-2 bg-background rounded-lg border border-border">
+              <button
+                onClick={toggleNotifications}
+                className="p-1 hover:bg-accent rounded-full transition-colors flex items-center justify-center"
+              >
+                <Bell className="h-5 w-5 text-primary" />
+              </button>
+              <span className="text-sm font-medium">Notifications</span>
+            </div>
+            <div className="flex flex-col gap-4">
+              <RecentActivity />
+            </div>
+          </div>
         </div>
       </div>
       
