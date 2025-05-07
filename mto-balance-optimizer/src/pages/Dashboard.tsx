@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
+import { ProductAlert } from '@/components/dashboard/ProductAlert';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, History, Bell, ChevronsRight, ChevronsLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +13,8 @@ import { cn } from '@/lib/utils';
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(true);
+  const [showProductAlert, setShowProductAlert] = useState(true);
+  const [blockedProducts, setBlockedProducts] = useState<Array<{ id: string; name: string; blockedSince: string }>>([]);
   const { toast } = useToast();
   
   const toggleNotifications = () => {
@@ -34,10 +37,39 @@ export default function Dashboard() {
     }, 1500);
   };
 
+  useEffect(() => {
+    // Simulate fetching blocked products
+    const fetchBlockedProducts = async () => {
+      try {
+        // In a real application, you would fetch this from your API
+        const blocked = [
+          { id: '1', name: 'Partner MTO 1', blockedSince: '2025-05-07' },
+          { id: '2', name: 'Partner MTO 2', blockedSince: '2025-05-06' }
+        ];
+        setBlockedProducts(blocked);
+      } catch (error) {
+        console.error('Error fetching blocked products:', error);
+      }
+    };
+
+    fetchBlockedProducts();
+  }, []);
+
+  const handleDismissAlert = () => {
+    setShowProductAlert(false);
+  };
+
   return (
     <Layout>
       <div className="p-6 md:p-10 max-w-screen animate-scale-in">
+      {showProductAlert && (
+            <ProductAlert
+              blockedProducts={blockedProducts}
+              onDismiss={handleDismissAlert}
+            />
+          )}
         <div className="flex items-center justify-between mb-8">
+          
           <div>
             <p className="text-muted-foreground mt-1">
               Aperçu des soldes et opérations MTO
