@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Bell, Sun, Moon, Menu, Euro, DollarSign } from 'lucide-react';
+import { Bell, Sun, Moon, Menu, Euro, DollarSign, Link, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ValueChange } from '../ui-custom/StatusIndicator';
 import { format } from 'date-fns';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -20,6 +21,9 @@ interface FXRate {
 }
 
 export function Header({ toggleSidebar }: HeaderProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname === '/';
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
@@ -128,6 +132,18 @@ export function Header({ toggleSidebar }: HeaderProps) {
       </div>
       
       <div className="flex items-center gap-2">
+
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="gap-2"
+          onClick={() => navigate("/")}
+          disabled={isDashboard}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Retour au tableau de bord</span>
+          
+        </Button>
         <Button 
           variant="ghost" 
           size="icon" 

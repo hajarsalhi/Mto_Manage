@@ -70,18 +70,11 @@ export default function TransferRates() {
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       
       <main 
-        className="pt-16 transition-all duration-300"
+        className="pt-16 flex justify-center transition-all duration-300 items-center"
         style={{ marginLeft: isSidebarOpen ? '280px' : '80px' }}
       >
         <div className="p-6 md:p-10 max-w-7xl animate-scale-in">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="heading-xl">Ajouter cours de virement</h1>
-              <p className="text-muted-foreground mt-1">
-                Spécifiez les taux de virement du jour
-              </p>
-            </div>
-            <div>
+        <div className="container mx-auto py-6 max-w-screen">
               <Button 
                 variant="outline" 
                 size="sm"
@@ -93,7 +86,15 @@ export default function TransferRates() {
                   <span>Retour au tableau de bord</span>
                 </Link>
               </Button>
+        </div>
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h1 className="heading-xl">Ajouter cours de virement</h1>
+              <p className="text-muted-foreground mt-1">
+                Spécifiez les taux de virement du jour
+              </p>
             </div>
+            
           </div>
           
           <div className="md:max-w-md">

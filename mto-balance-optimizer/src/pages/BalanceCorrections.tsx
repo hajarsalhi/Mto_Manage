@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowLeft, Link } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function BalanceCorrections() {
@@ -118,6 +118,7 @@ export default function BalanceCorrections() {
             <p className="text-muted-foreground mt-1">
               Adjust MTO balances and record corrections
             </p>
+
           </div>
           
           <Card>

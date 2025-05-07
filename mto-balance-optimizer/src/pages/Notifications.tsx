@@ -359,18 +359,13 @@ export default function Notifications() {
                           <div className="flex-1">
                             <div className="form-group">
                               <Label htmlFor="notificationTime">Notification Time</Label>
-                              <Select value={notificationTime} onValueChange={setNotificationTime}>
-                                <SelectTrigger id="notificationTime" className="w-full mt-2">
-                                  <SelectValue placeholder="Select notification time" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="09:00">09:00</SelectItem>
-                                  <SelectItem value="12:00">12:00</SelectItem>
-                                  <SelectItem value="14:00">14:00</SelectItem>
-                                  <SelectItem value="16:00">16:00</SelectItem>
-                                  <SelectItem value="18:00">18:00</SelectItem>
-                                </SelectContent>
-                              </Select>
+                              <input
+                                type="time"
+                                className="w-full p-2 border border-gray-300 rounded-md"
+                                value={notificationTime}
+                                onChange={(e) => setNotificationTime(e.target.value)}
+                                required
+                              />
                               <p className="text-xs text-muted-foreground mt-1.5">
                                 Notifications will be sent daily at this time
                               </p>

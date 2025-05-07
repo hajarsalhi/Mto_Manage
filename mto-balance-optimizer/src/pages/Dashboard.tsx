@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { MTOCollapsible } from '@/components/dashboard/MTOCollapsible';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
@@ -9,12 +9,13 @@ import { RefreshCw, History, Bell, ChevronsRight, ChevronsLeft } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(true);
   const [showProductAlert, setShowProductAlert] = useState(true);
-  const [blockedProducts, setBlockedProducts] = useState<Array<{ id: string; name: string; blockedSince: string }>>([]);
+  const [blockedProducts, setBlockedProducts] = useState<Array<{ id: string; name: string; blockedSince: string }>>([ { id: '1', name: 'Partner 1', blockedSince: '2023-01-01' }, { id: '2', name: 'Partner 2', blockedSince: '2023-01-02' }]);
   const { toast } = useToast();
   
   const toggleNotifications = () => {
@@ -29,6 +30,24 @@ export default function Dashboard() {
     setTimeout(() => {
       setIsLoading(false);
       
+      // Re-fetch blocked partners after refresh
+      const getBlockedPartners = () => {
+        if (blockedProducts.length > 0) {
+          const formattedPartners = blockedProducts.map(partner => ({
+            id: partner.id,
+            name: partner.name,
+            blockedSince: format(new Date(), 'yyyy-MM-dd')
+          }));
+          setBlockedProducts(formattedPartners);
+          setShowProductAlert(true);
+        } else {
+          setBlockedProducts([]);
+          setShowProductAlert(false);
+        }
+      };
+
+      getBlockedPartners();
+      
       toast({
         title: "Tableau de bord actualisé",
         description: "Toutes les données ont été mises à jour aux dernières valeurs.",
@@ -38,22 +57,30 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // Simulate fetching blocked products
-    const fetchBlockedProducts = async () => {
-      try {
-        // In a real application, you would fetch this from your API
-        const blocked = [
-          { id: '1', name: 'Partner MTO 1', blockedSince: '2025-05-07' },
-          { id: '2', name: 'Partner MTO 2', blockedSince: '2025-05-06' }
-        ];
-        setBlockedProducts(blocked);
-      } catch (error) {
-        console.error('Error fetching blocked products:', error);
+    // Get blocked partners from MTOCollapsible
+    const getBlockedPartners = () => {
+      // Simulate fetching blocked partners from MTOCollapsible
+      if (blockedProducts.length > 0) {
+        const formattedPartners = blockedProducts.map(partner => ({
+          id: partner.id,
+          name: partner.name,
+          blockedSince: format(new Date(), 'yyyy-MM-dd')
+        }));
+        setBlockedProducts(formattedPartners);
+        setShowProductAlert(true);
+      } else {
+        setBlockedProducts([]);
+        setShowProductAlert(false);
       }
     };
 
-    fetchBlockedProducts();
-  }, []);
+    // Initial fetch
+    getBlockedPartners();
+
+    // Re-fetch when MTOCollapsible data changes
+    const interval = setInterval(getBlockedPartners, 5000);
+    return () => clearInterval(interval);
+  }, [blockedProducts]);
 
   const handleDismissAlert = () => {
     setShowProductAlert(false);
@@ -68,8 +95,7 @@ export default function Dashboard() {
               onDismiss={handleDismissAlert}
             />
           )}
-        <div className="flex items-center justify-between mb-8">
-          
+        {/*<div className="flex items-center justify-between mb-8">
           <div>
             <p className="text-muted-foreground mt-1">
               Aperçu des soldes et opérations MTO
@@ -86,19 +112,8 @@ export default function Dashboard() {
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               <span>Actualiser</span>
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="gap-2"
-              asChild
-            >
-              <Link to="/activity-history">
-                <History className="h-4 w-4" />
-                <span>Historique</span>
-              </Link>
-            </Button>
           </div>
-        </div>
+        </div>  )*/}
         <div className="flex flex-row gap-3 w-full">
 
           {/* MTO Cards Container */}

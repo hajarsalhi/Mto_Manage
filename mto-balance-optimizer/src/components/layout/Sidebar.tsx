@@ -11,6 +11,7 @@ import {
   Upload,
   Banknote
 } from 'lucide-react';
+import logo from '@/assets/images/LogoCP.png';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -87,12 +88,12 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
       >
         <div className="flex items-center justify-between p-4 h-16 border-b border-sidebar-border">
           <div className={cn("flex items-center gap-2", isCollapsed && "justify-center w-full")}>
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-gold flex items-center justify-center">
-              <span className="text-white font-bold">M</span>
+            <div className="flex-shrink-0 w-8 h-8">
+              <img src={logo} alt="Balance System Logo" className="w-full h-full object-contain" />
             </div>
             {!isCollapsed && (
               <span className="font-semibold tracking-tight">
-                Balance System
+                MTOs Balance System
               </span>
             )}
           </div>
