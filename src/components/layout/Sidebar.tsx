@@ -145,13 +145,13 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             <SidebarLink 
               to="/notifications" 
               icon={Bell} 
-              label="Notifications" 
+              label="Fx Rate Notifications" 
               isCollapsed={isCollapsed} 
             />
             <SidebarLink 
               to="/transfer-rates" 
               icon={Banknote} 
-              label="Cours de virement" 
+              label="Reference Rate" 
               isCollapsed={isCollapsed} 
             />
           </div>

@@ -23,7 +23,7 @@ export function Layout({ children }: LayoutProps) {
       
       <div className="flex-1 flex flex-col ml-0 md:ml-[280px]">
         <Header toggleSidebar={toggleSidebar} />
-        <main className="flex-1">
+        <main className="flex-1 pt-20 md:pt-24">
           {children}
         </main>
       </div>

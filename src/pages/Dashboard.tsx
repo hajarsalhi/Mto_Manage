@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(true);
   const { toast } = useToast();
   
   const toggleNotifications = () => {
@@ -39,7 +39,6 @@ export default function Dashboard() {
       <div className="p-6 md:p-10 max-w-screen animate-scale-in">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="heading-xl">Tableau de bord</h1>
             <p className="text-muted-foreground mt-1">
               Aperçu des soldes et opérations MTO
             </p>
@@ -78,7 +77,7 @@ export default function Dashboard() {
           </div>
 
           {/* Notifications Panel */}
-        <div className="relative flex flex-col items-end gap-4">
+        <div className="relative flex flex-col items-end gap-4 mt-6">
           {/* Always visible toggle button */}
           <Button
             variant="ghost"
@@ -92,7 +91,7 @@ export default function Dashboard() {
           {/* This container collapses */}
           <div
             className={cn(
-              "transition-all duration-300 overflow-hidden",
+              "transition-all duration-300 overflow-hidden mt-6",
               showNotifications ? "w-72 opacity-100" : "w-0 opacity-0"
             )}
           >
@@ -104,8 +103,8 @@ export default function Dashboard() {
       </div>
       
       {/* Decorative background elements */}
-      <div className="fixed top-0 right-0 w-1/3 h-1/3 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
-      <div className="fixed bottom-0 left-0 w-1/4 h-1/4 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full"></div>
+      <div className="fixed top-0 right-0 w-1/3 h-1/3 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full pointer-events-none"></div>
+      <div className="fixed bottom-0 left-0 w-1/4 h-1/4 bg-gradient-gold opacity-[0.03] blur-3xl rounded-full pointer-events-none"></div>
     </Layout>
   );
 }

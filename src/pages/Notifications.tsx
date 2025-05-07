@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { mtoData } from '@/data/riskManagementData';
 import { format } from 'date-fns';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 
 export default function Notifications() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -201,23 +202,30 @@ export default function Notifications() {
               <CardTitle>Current day</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4 mb-8">
-                <div className="font-medium">Currency</div>
-                <div className="font-medium">Rate</div>
-                <div className="font-medium">Source</div>
-                
-                {currentRates.map((rate) => (
-                  <div key={rate.currency}>
-                    <div className="py-2">{rate.currency}</div>
-                    <div className="py-2">{rate.rate.toFixed(4)}</div>
-                    <div className="py-2 flex justify-between items-center">
-                      <span>{rate.source}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {format(rate.updatedAt, "HH:mm:ss")}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div className="space-y-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Currency</TableHead>
+                      <TableHead>Rate</TableHead>
+                      <TableHead>Source</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {currentRates.map((rate) => (
+                      <TableRow key={rate.currency}>
+                        <TableCell>{rate.currency}</TableCell>
+                        <TableCell>{rate.rate.toFixed(4)}</TableCell>
+                        <TableCell className="flex justify-between items-center">
+                          <span>{rate.source}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {format(rate.updatedAt, "HH:mm:ss")}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
