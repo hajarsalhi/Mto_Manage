@@ -74,19 +74,6 @@ export default function TransferRates() {
         style={{ marginLeft: isSidebarOpen ? '280px' : '80px' }}
       >
         <div className="p-6 md:p-10 max-w-7xl animate-scale-in">
-        <div className="container mx-auto py-6 max-w-screen">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="gap-2"
-                asChild
-              >
-                <Link to="/">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Retour au tableau de bord</span>
-                </Link>
-              </Button>
-        </div>
           <div className="flex items-center justify-between mb-10">
             <div>
               <h1 className="heading-xl">Ajouter cours de virement</h1>

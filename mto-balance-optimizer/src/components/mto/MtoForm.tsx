@@ -251,35 +251,13 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Heure d'envoi</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={`w-full pl-3 text-left font-normal ${
-                            !field.value ? "text-muted-foreground" : ""
-                          }`}
-                        >
-                          {field.value || "Sélectionner l'heure d'envoi"}
-                          <CalendarClock className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectContent position="popper">
-                          {Array.from({ length: 24 }, (_, i) => i).map((hour) => (
-                            <SelectItem key={hour} value={`${hour}:00`}>
-                              {hour < 10 ? `0${hour}:00` : `${hour}:00`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </PopoverContent>
-                  </Popover>
+                  <input
+                    type="time"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    required
+                  />
                   <FormDescription>
                     Heure à laquelle les données seront envoyées chaque jour
                   </FormDescription>
