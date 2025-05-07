@@ -1,0 +1,19 @@
+package com.mtoManage.CP_mtoLedger.dto;
+
+import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductRequestAdd {
+    private Integer productId;
+    private BigDecimal commission ;
+    private String devise;
+    private Boolean active;
+}

@@ -1,0 +1,27 @@
+package com.mtoManage.CP_mtoLedger.repositories;
+
+import com.mtoManage.CP_mtoLedger.models.TresoNotifications;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TresoNotificationsRepository extends JpaRepository<TresoNotifications, Integer> {
+
+    @Query("SELECT n.rate FROM TresoNotifications n WHERE n.productId = :productId AND n.applyDate <= :date AND n.nextApplyDate >= :date")
+    Optional<BigDecimal> findRateForDate(@Param("productId") Integer productId, @Param("date") LocalDateTime date);
+
+    @Query("SELECT n FROM TresoNotifications n WHERE n.productId = :productId AND n.date >= :startDate AND n.received = true")
+    List<TresoNotifications> findByProductIdAndDateAfter(
+        @Param("productId") Integer productId,
+        @Param("startDate") LocalDateTime startDate
+    );
+
+} 

@@ -1,0 +1,115 @@
+package com.mtoManage.CP_mtoLedger.services.impl;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mtoManage.CP_mtoLedger.dto.RiskValueRequest;
+import com.mtoManage.CP_mtoLedger.models.TresoMessages;
+import com.mtoManage.CP_mtoLedger.models.TresoRiskValue;
+import com.mtoManage.CP_mtoLedger.repositories.TresoMessagesRepository;
+import com.mtoManage.CP_mtoLedger.repositories.TresoRiskValueRepository;
+
+
+@Service
+public class RiskValueServiceImpl {
+
+    
+    public final TresoRiskValueRepository tresoRiskValueRepository;
+
+    public final TresoMessagesRepository tresoMessagesRepository;
+
+    @Autowired
+    public RiskValueServiceImpl(TresoRiskValueRepository tresoRiskValueRepository, TresoMessagesRepository tresoMessagesRepository) {
+        this.tresoRiskValueRepository = tresoRiskValueRepository;
+        this.tresoMessagesRepository = tresoMessagesRepository;
+    }
+
+    
+
+    public void createRiskValue(RiskValueRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        System.out.println("Creating risk value: " + request);
+        
+        TresoRiskValue tresoRiskValue = new TresoRiskValue();
+        tresoRiskValue.setProductId(request.getProductId());
+        tresoRiskValue.setRiskValue(request.getRiskValue());
+        tresoRiskValue.setDateStart(LocalDateTime.of(request.getValidateFrom(), LocalTime.now()));
+        tresoRiskValue.setDateEnd(LocalDateTime.of(request.getValidateTo(), LocalTime.now()));
+        tresoRiskValue.setDateCreated(LocalDateTime.now());
+
+        tresoRiskValueRepository.save(tresoRiskValue);
+
+        /* 
+        TresoMessages notification = new TresoMessages();
+        String balise = "<i style=\"color:#5ab8e8\" class=\"fa fa-info-circle\"></i>";
+        StringBuilder message = new StringBuilder();
+        message.append(balise)
+                .append("The Risk Value for the product ")
+                .append(request.getProductId())
+                .append(" was created by ")
+                .append(username);
+        
+        notification.setDate(LocalDateTime.now());
+        notification.setMessage(message.toString());
+
+        tresoMessagesRepository.save(notification);
+        */
+
+    }
+
+    @Transactional
+    public HashMap<TresoRiskValue , String> getRiskValues() {
+        HashMap<TresoRiskValue , String> riskValues = new HashMap<>();
+        List<TresoRiskValue> tresoRiskValues = tresoRiskValueRepository.findAll();
+        
+        for (TresoRiskValue riskValue : tresoRiskValues) {
+            // Create a copy of the risk value without the product reference to avoid circular reference
+            TresoRiskValue riskValueCopy = new TresoRiskValue();
+            riskValueCopy.setId(riskValue.getId());
+            riskValueCopy.setProductId(riskValue.getProductId());
+            riskValueCopy.setRiskValue(riskValue.getRiskValue());
+            riskValueCopy.setDateStart(riskValue.getDateStart());
+            riskValueCopy.setDateEnd(riskValue.getDateEnd());
+            riskValueCopy.setDateCreated(riskValue.getDateCreated());
+            riskValueCopy.setAccessId(riskValue.getAccessId());
+            riskValueCopy.setLogin(riskValue.getLogin());
+            riskValueCopy.setProductName(riskValue.getProduct() != null ? riskValue.getProduct().getProductName() : null);
+            
+            // Calculate the state
+            String state = calculStateRiskValue(riskValue.getDateStart(), riskValue.getDateEnd());
+            
+            // Add to the map
+            riskValues.put(riskValueCopy, state);
+        }
+        
+        return riskValues;
+    }
+    
+
+    public String calculStateRiskValue(LocalDateTime dateStart , LocalDateTime dateEnd) {
+        
+            if (dateStart.isAfter(LocalDateTime.now()) && dateEnd.isAfter(LocalDateTime.now())) {
+                return "Pending";
+            } else if((dateStart.isEqual(LocalDateTime.now()) && dateEnd.isEqual(LocalDateTime.now()) )
+            || (dateStart.isAfter(LocalDateTime.now()) || dateStart.isBefore(LocalDateTime.now())) && dateEnd.isAfter(LocalDateTime.now())) {
+                return "Active";
+            } else if(dateEnd.isBefore(LocalDateTime.now())) {
+                return "Expired";
+            } else {
+                return "Unknown"; 
+            }
+        
+    }
+}

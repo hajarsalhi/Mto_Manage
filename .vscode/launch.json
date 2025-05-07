@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CpMtoLedgerApplication",
+            "request": "launch",
+            "mainClass": "CpMtoLedgerApplication",
+            "projectName": "CP_mtoLedger"
+        },
+        {
+            "type": "java",
+            "name": "CpMtoLedgerApplication",
+            "request": "launch",
+            "mainClass": "com.mtoManage.CP_mtoLedger.CpMtoLedgerApplication",
+            "projectName": "CP_mtoLedger"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Node.js",
+            "program": "${workspaceFolder}/app.js",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}

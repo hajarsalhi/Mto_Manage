@@ -1,0 +1,48 @@
+INSERT INTO treso_commission (n_product_id,product_name,product_type,product_sous_type,type_commission,taux_commission,taux_retrocession) VALUES
+	 (10120,N'TKS',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.04,NULL),
+	 (10117,N'TaptapSendBD',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.09,NULL),
+	 (100,N'CNSS',N'TRANSFERT',N'INTERNATIONAL',N'PERC',1.30,NULL),
+	 (1058,N'Moneyexchange',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.04,NULL),
+	 (1057,N'monty',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.04,NULL),
+	 (57,N'WorldRemit',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.03,NULL),
+	 (51,N'i-transfer',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.03,NULL),
+	 (53,N'YallahXach',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.05,NULL),
+	 (50,N'pintail',N'TRANSFERT',N'INTERNATIONAL',N'PERC',1.15,NULL),
+	 (52,N'XOOM_IGNORE',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.05,NULL);
+	(5101,N'MFSAfrica',N'TRANSFERT',N'INTERNATIONAL',N'PERC',0.03,NULL),
+
+INSERT INTO treso_product(n_product_id,s_product_name,s_product_method,b_active,f_facilite,f_moving_avg,b_deblock,fmawarning,fmablock,s_product_devise_fx,f_decote,s_lib_decote,s_notif,d_date_notif,s_email,updated_by,s_sftp_server,n_sftp_port,s_sftp_username,s_sftp_password,s_file_name_suffix,s_file_name_prefix,s_local_directory_name,s_remote_directory_name,b_use_client_certificate,b_send_reconciliation_file,s_email_reconciliation,n_apply_day,t_apply_hour,f_facilite_temp,d_date_facilite_temp,b_blocked,n_balance_product_id) 
+VALUES (10113,N'JubaExpress',N'EUR',1,NULL,NULL,NULL,1.25,1.50,N'MAD',0.0013,N'libelle',N'Aucune','22:00:00',N'djoharmouna97@gmail.com',N'asmaa.anna0',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,1,'00:00:00',NULL,NULL,NULL,10113)
+
+INSERT INTO treso_compensation (d_date,n_product_id,s_product_name,n_compensation,n_comp_theorique,d_insertion,f_taux,n_comp_commission,n_amount_used,s_file_name,n_access_id,n_reference) VALUES
+
+	 ('2024-10-25',10123,N'National Exchange',10000.00,0.00,'2024-03-27 08:29:35.000',10.75,72.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456'),
+
+	 ('2024-10-25',10123,N'National Exchange',10000.00,0.00,'2024-03-27 08:29:35.000',10.74,72.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'65456'),
+
+	 ('2023-12-12',10113,N'JubaExpress',100.00,0.00,'2023-12-12 10:53:50.000',0.00,0.00,0.00,NULL,5,NULL),
+
+	 ('2023-05-23',10114,N'Nedsom',5880.00,0.00,'2023-05-25 16:03:06.000',10.75,120.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F3'),
+
+	 ('2023-05-23',10114,N'Nedsom',5880.00,0.00,'2023-05-25 16:12:10.000',10.75,120.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F4'),
+
+	 ('2022-10-12',5101,N'MFS',5000.00,0.00,'2022-10-12 00:10:45.000',10.75,120.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F5'),
+
+	 ('2022-10-12',5101,N'MFS',5000.00,0.00,'2022-10-12 00:10:45.000',10.75,120.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F7'),
+
+	 ('2022-08-28',25,N'Money Trans',5880.00,0.00,'2022-08-29 16:00:59.000',10.75,120.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F1'),
+
+	 ('2022-08-17',23,N'Money Exchange',5928.00,0.00,'2022-08-18 08:35:22.000',10.75,72.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456'),
+
+	 ('2022-08-17',29,N'WARI',2970.00,0.00,'2022-08-18 08:35:22.000',10.74,30.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'6578'),
+	 ('2022-08-17',23,N'Money Exchange',5928.00,0.00,'2022-08-18 08:43:32.000',10.75,72.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'3456F1'),
+
+	 ('2022-08-17',29,N'WARI',2970.00,0.00,'2022-08-18 08:43:32.000',10.74,30.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'6578F3'),
+
+	 ('2022-08-15',23,N'Money Exchange',5928.00,0.00,'2022-08-16 14:29:35.000',10.75,72.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'4'),
+
+	 ('2022-08-15',55,N'Xoom',10000.00,0.00,'2024-03-27 08:29:35.000',10.74,30.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'4'),
+
+	 ('2022-08-15',29,N'WARI',2970.00,0.00,'2022-08-16 10:43:59.000',10.74,30.00,0.00,N'/Applications/ColdFusion11/cfusion/wwwroot/cashplus_files/cp_data/treso_compensations/Compens051120.csv',2,N'1');
+
+ 

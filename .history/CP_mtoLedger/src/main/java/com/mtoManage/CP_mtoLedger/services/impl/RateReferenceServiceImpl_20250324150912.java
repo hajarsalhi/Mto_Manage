@@ -1,0 +1,25 @@
+package com.mtoManage.CP_mtoLedger.services.impl;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Service;
+
+import com.mtoManage.CP_mtoLedger.models.TresoBkam;
+import com.mtoManage.CP_mtoLedger.repositories.TresoBkamRepository;
+
+@Service
+public class RateReferenceServiceImpl {
+    
+    @Autowired
+    private TresoBkamRepository bkamRepository ;
+
+
+    public void updateRateReference(RequestEntity<?> request) {
+
+        TresoBkam  bkam = new TresoBkam();
+
+        bkam.setDDate(LocalDateTime.now());
+        bkam.setFCoursVirement(request.);
+    }}

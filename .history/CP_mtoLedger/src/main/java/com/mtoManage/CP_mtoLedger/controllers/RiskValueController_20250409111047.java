@@ -1,0 +1,40 @@
+package com.mtoManage.CP_mtoLedger.controllers;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mtoManage.CP_mtoLedger.dto.RiskValueRequest;
+import com.mtoManage.CP_mtoLedger.models.TresoRiskValue;
+import com.mtoManage.CP_mtoLedger.services.impl.RiskValueServiceImpl;
+
+@RestController
+@RequestMapping("/api/risk-value")
+@CrossOrigin(origins = "http://localhost:3000")
+public class RiskValueController {
+
+    @Autowired
+    private  RiskValueServiceImpl riskValueService;
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createRiskValue(@RequestBody RiskValueRequest RiskValueData) {
+        riskValueService.createRiskValue(RiskValueData);
+        return ResponseEntity.ok("Risk value created successfully");
+    }
+
+    @GetMapping("getRiskValues")
+    public ResponseEntity<HashMap<TresoRiskValue, String>> getRiskValues() {
+        HashMap<TresoRiskValue, String> riskValues = riskValueService.getRiskValues();
+        return ResponseEntity.ok(riskValues);
+    }
+    
+}

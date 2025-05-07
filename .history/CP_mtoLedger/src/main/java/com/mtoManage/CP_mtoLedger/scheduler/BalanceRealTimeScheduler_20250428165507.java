@@ -1,0 +1,253 @@
+package com.mtoManage.CP_mtoLedger.scheduler;
+
+import com.mtoManage.CP_mtoLedger.models.*;
+import com.mtoManage.CP_mtoLedger.repositories.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class BalanceRealTimeScheduler {
+
+    private final TresoTransactionRepository transactionRepository;
+    private final TresoProductRepository productRepository;
+    private final TresoCommissionRepository commissionRepository;
+    private final TresoCurrentBalanceRepository currentBalanceRepository;
+    private final PartnerProductRepository partnerProductRepository;
+    private final PartnerInfoRepository partnerInfoRepository;
+    private final TresoNotificationsRepository notificationRepository;
+    private final PartnerXRepository partnerXRepository;
+    private final TresoSchedulerRepository schedulerRepository;
+    private final TresoRiskValueRepository tresoRiskValueRepository;
+    private final TresoMessagesRepository tresoMessagesRepository;
+
+    @Scheduled(fixedRate = 900000) // Run every 15 minutes
+    @Transactional
+    public void setBalanceRealTime() {
+        log.info("Start Current Balance");
+        try {
+            // Get bank deposit products
+            List<Integer> bankDepositProducts = productRepository.findBankDepositProducts();
+            log.info("Bank deposit products: {}", bankDepositProducts);
+
+            // Get all products except bank deposit and specific IDs
+            List<TresoProduct> products = productRepository.findAllExceptSpecificIds(bankDepositProducts);
+            log.info("Found {} products to process", products.size());
+
+            // Get last transaction date
+            LocalDateTime lastTransactionDate = transactionRepository.findLastTransactionDate(bankDepositProducts);
+            log.info("Last transaction date: {}", lastTransactionDate);
+
+            // Process transactions from Partner_X
+            processPartnerXTransactions(lastTransactionDate, bankDepositProducts);
+
+            // Calculate and update balances
+            updateBalances(products, lastTransactionDate);
+
+            // Check for transaction delay
+            checkTransactionDelay(lastTransactionDate);
+
+            log.info("Finish setBalanceRealTime");
+            // keep a record of the scheduler execution
+            TresoScheduler scheduler = new TresoScheduler();
+            scheduler.setDate(LocalDateTime.now());
+            scheduler.setSchedulerName("setBalanceRealTime");
+            scheduler.setState(1);
+    
+            schedulerRepository.save(scheduler);
+
+        } catch (Exception e) {
+            
+            log.error("Error in setBalanceRealTime scheduler", e);
+
+            // keep a record of the scheduler execution with error
+            TresoScheduler scheduler = new TresoScheduler();
+            scheduler.setDate(LocalDateTime.now());
+            scheduler.setSchedulerName("setBalanceRealTime");
+            scheduler.setState(0);
+            scheduler.setErrorDesc(e.getMessage().substring(0, 255));
+    
+            schedulerRepository.save(scheduler);
+        }
+    }
+
+    private void processPartnerXTransactions(LocalDateTime lastTransactionDate, List<Integer> bankDepositProducts) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime fiveMinutesAgo = currentTime.minusMinutes(5);
+
+        List<PartnerX> partnerTransactions = partnerXRepository.findPaidTransactionsBetween(
+            lastTransactionDate,
+            fiveMinutesAgo,
+            bankDepositProducts
+        );
+
+        for (PartnerX transaction : partnerTransactions) {
+            TresoTransactions tresoTransaction = new TresoTransactions();
+            tresoTransaction.setDate(transaction.getPaidDateTime());
+            tresoTransaction.setTransactionCode(transaction.getTrackingNumber());
+            tresoTransaction.setTransactionInternalCode(transaction.getInternalTrackingNumber());
+            tresoTransaction.setAmountDH(transaction.getReceiveAmount());
+            tresoTransaction.setTransactionId(transaction.getTransactionId());
+            tresoTransaction.setProductId(transaction.getPartnerId());
+            // Get product name from the product repository
+            TresoProduct product = productRepository.findById(transaction.getPartnerId()).orElse(null);
+            if (product != null) {
+                tresoTransaction.setProductName(product.getProductName());
+            }
+
+            // Get rate from notifications or use default
+            BigDecimal rate = notificationRepository.findRateForDate(
+                transaction.getPartnerId(),
+                transaction.getPaidDateTime()
+            ).orElse(new BigDecimal("12"));
+
+            tresoTransaction.setTauxTheorique(rate);
+            tresoTransaction.setAmountDevise(
+                transaction.getSendAmount().divide(rate, 2, BigDecimal.ROUND_HALF_UP)
+            );
+            tresoTransaction.setSendCurrency(transaction.getSendCurrency());
+
+            transactionRepository.save(tresoTransaction);
+        }
+    }
+
+    private void updateBalances(List<TresoProduct> products, LocalDateTime lastTransactionDate) {
+        for (TresoProduct product : products) {
+            try {
+                // Calculate sum of transactions
+                BigDecimal transactionSum = transactionRepository.calculateTransactionSum(
+                    lastTransactionDate,
+                    product.getProductId()
+                );
+
+                if (transactionSum.compareTo(BigDecimal.ZERO) == 0) {
+                    continue;
+                }
+
+                // Get commission rate
+                BigDecimal commissionRate = commissionRepository.findTauxCommission(product.getProductId())
+                    .map(TresoCommission::getTauxCommission)
+                    .orElse(BigDecimal.ZERO)
+                    .divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+
+                // Get last transaction ID
+                Integer lastTransactionId = transactionRepository.findLastTransactionId(
+                    lastTransactionDate,
+                    product.getProductId()
+                );
+
+                if (lastTransactionId != null) {
+                    // Update current balance
+                   
+                    if (currentBalanceRepository.findByProductId(product.getBalanceProductId()) == null) {
+                        TresoCurrentBalance tresoCurrentBalance = new TresoCurrentBalance();
+                        tresoCurrentBalance.setProductId(product.getBalanceProductId());
+                        tresoCurrentBalance.setCurrentBalance(transactionSum.multiply(BigDecimal.ONE.add(commissionRate)));
+                        tresoCurrentBalance.setLastTrxId(lastTransactionId);
+                        tresoCurrentBalance.setDateUpdate(LocalDateTime.now());
+                        currentBalanceRepository.save(tresoCurrentBalance);
+                    }
+                    else {
+                        currentBalanceRepository.updateCurrentBalance(
+                            product.getBalanceProductId(),
+                            transactionSum.multiply(BigDecimal.ONE.add(commissionRate)),
+                            lastTransactionId
+                        );
+                    }
+                }
+                // monitor Balance ;
+                
+                TresoRiskValue riskValue = tresoRiskValueRepository.findTopByProductIdOrderByDateCreatedDesc(product.getProductId()).orElse(null);
+                TresoCurrentBalance currentBalance = currentBalanceRepository.findByProductId(product.getBalanceProductId())
+                    .orElseGet(() -> {
+                        log.warn("No current balance found for product {}. Creating new balance record.", product.getBalanceProductId());
+                        TresoCurrentBalance newBalance = new TresoCurrentBalance();
+                        newBalance.setProductId(product.getBalanceProductId());
+                        newBalance.setCurrentBalance(BigDecimal.ZERO);
+                        newBalance.setDateUpdate(LocalDateTime.now());
+                        return currentBalanceRepository.save(newBalance);
+                    });
+                
+                if (currentBalance != null && riskValue != null) {
+                    int maxRetries = 3;
+                    int retryCount = 0;
+                    boolean success = false;
+
+                    while (!success && retryCount < maxRetries) {
+                        try {
+                            BigDecimal balance = currentBalance.getCurrentBalance().add(riskValue.getRiskValue());
+                            if (balance.compareTo(BigDecimal.ZERO) < 0 && product.getActive() == 1) {
+                                log.warn("Product {} balance is negative: blocking the product", product.getProductId());
+                                // Block the product
+                                product.setBlocked(true);
+                                productRepository.save(product);
+
+                                //add notif message record
+                                TresoMessages message = new TresoMessages();
+                                message.setDate(LocalDateTime.now());
+                                message.setMessage("<i style=\"color:red\" class=\"fa fa-exclamation-circle\"></i> Product "+product.getProductName()+" is blocked due to insuffisant balance!!!!");
+                                
+                                tresoMessagesRepository.save(message);
+                            }
+                            else if (balance.compareTo(BigDecimal.ZERO) >= 0 && product.getActive() == 0) {
+                                log.info("Product {} balance is positive: unblocking the product", product.getProductId());
+                                // Unblock the product
+                                product.setBlocked(false);
+                                productRepository.save(product);
+
+                                //add notif message record
+                                TresoMessages message = new TresoMessages();
+                                message.setDate(LocalDateTime.now());
+                                message.setMessage("<i style=\"color:red\" class=\"fa fa-info-circle\"></i> Product "+product.getProductName()+" is unblocked");
+                                
+                                tresoMessagesRepository.save(message);
+                            }
+                            currentBalance.setDateUpdate(LocalDateTime.now());
+                            currentBalance.setCurrentBalance(balance);
+                            currentBalanceRepository.saveAndFlush(currentBalance);
+                            success = true;
+                        } catch (ObjectOptimisticLockingFailureException e) {
+                            retryCount++;
+                            if (retryCount < maxRetries) {
+                                log.warn("Optimistic lock exception for product {}, retry attempt {}", product.getProductId(), retryCount);
+                                // Refresh the entity from the database
+                                currentBalance = currentBalanceRepository.findByProductId(product.getBalanceProductId())
+                                    .orElse(null);
+                                if (currentBalance == null) {
+                                    log.error("Product {} balance record no longer exists", product.getProductId());
+                                    break;
+                                }
+                            } else {
+                                log.error("Failed to update balance for product {} after {} retries", product.getProductId(), maxRetries);
+                                throw e;
+                            }
+                        }
+                    }
+                } 
+            } catch (Exception e) {
+                log.error("Error updating balance for product {}: {}", product.getProductId(), e.getMessage());
+            }
+        }
+    }
+
+    private void checkTransactionDelay(LocalDateTime lastTransactionDate) {
+        LocalDateTime now = LocalDateTime.now();
+        int hoursDifference = (int) java.time.Duration.between(lastTransactionDate, now).toHours();
+
+        if (now.getHour() > 11 && now.getHour() < 22 && hoursDifference > 4) {
+            log.warn("No transaction has been added for 4H");
+            // TODO: Implement email notification system
+        }
+    }
+} 

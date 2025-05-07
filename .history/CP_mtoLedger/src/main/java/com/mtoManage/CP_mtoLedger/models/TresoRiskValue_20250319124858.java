@@ -1,0 +1,39 @@
+package com.mtoManage.CP_mtoLedger.models;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "Treso_Risk_Value", schema = "dbo")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TresoRiskValue {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "nId")
+    private Integer id;
+
+    @Column(name = "nProductId")
+    private Integer productId;
+
+    @Column(name = "nRiskValue", precision = 18, scale = 2)
+    private BigDecimal riskValue;
+
+    @Column(name = "dStartDate")
+    private LocalDate startDate;
+
+    @Column(name = "dEndDate")
+    private LocalDate endDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nProductId", referencedColumnName = "nProductId", insertable = false, updatable = false)
+    private TresoProduct product;
+} 
