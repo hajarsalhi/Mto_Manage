@@ -14,7 +14,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Tabs, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
 interface MTOData {
-  id: string;
+  id: number;
   name: string;
   currency: string;
   balance: number;
@@ -107,7 +107,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
       const isCritical = isBlocked || balance < 10000 || (balance + riskValue < 20000);
       
       return {
-        id: `mto${index + 1}`,
+        id: index + 1,
         name: `Partner MTO ${index + 1}`,
         currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
         balance: balance,
@@ -178,7 +178,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
     navigate('/add-mto');
   };
 
-  const handleRiskManagement = (mtoId: string) => {
+  const handleRiskManagement = (mtoId: number) => {
     navigate(`/risk-management?mtoId=${mtoId}`);
     
     const mto = mtoList.find(m => m.id === mtoId);
@@ -196,9 +196,9 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
     
   }
   
-  const handleViewDetails = (mtoId: string) => {
+  const handleViewDetails = (mtoId: number) => {
     // Redirect to MTO details page instead of risk management
-    navigate('/mto-details');
+    navigate(`/mto-details/${mtoId}`);
     
     const mto = mtoList.find(m => m.id === mtoId);
     
@@ -209,7 +209,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
     });
   };
 
-  const toggleItem = (id: string) => {
+  const toggleItem = (id: number) => {
     setOpenItems(prev => ({
       ...prev,
       [id]: !prev[id]
@@ -225,12 +225,12 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
         <div>
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Partenaires MTO
+            MTOs
           </h2>
           {hasCriticalMTOs && (
             <p className="text-finance-negative text-sm mt-1 flex items-center gap-1">
               <AlertTriangle className="h-4 w-4" />
-              {criticalMTOs.length} partenaire(s) en état critique
+              {criticalMTOs.length} MTO(s) en état critique
             </p>
           )}
         </div>
@@ -239,7 +239,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
               <TabsList className="grid w-full grid-cols-3 bg-gray-100 p-1 rounded-lg items-center justify-center">
                 <TabsTrigger value="all" className=" data-[state=active]:rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
                   <div className="flex flex-col items-center">
-                    <span className="text-sm">All MTOs</span>
+                    <span className="text-sm">All</span>
                     <span className="text-xs text-muted-foreground">
                       {mtoList.length}
                     </span>
@@ -324,7 +324,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                      <div className="text-sm font-semibold">Balance: {formatCurrency(mto.balance, mto.currency)}
+                      <div className="text-sm font-semibold">{formatCurrency(mto.balance, mto.currency)}
                           <div className="flex items-right justify-end gap-1 text-xs text-right">  
                             <ValueChange 
                               value={mto.change} 
@@ -391,7 +391,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                         
                         <Progress
                           value={(mto.riskValue / Math.abs(mto.balance + mto.riskValue)) * 100}
-                          className="h-2"
+                          className="h-2 bg-gray-200"
                           indicatorClassName={
                             mto.isBlocked 
                               ? "bg-finance-negative" 
@@ -436,7 +436,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
                       {mto.nextRiskValue && mto.nextRiskStartDate ? (
                         `Prochain Risk Value: ${formatCurrency(mto.nextRiskValue, mto.currency)} à partir du ${format(mto.nextRiskStartDate, 'dd/MM/yyyy')}`
                       ) : (
-                        "Prochain Risk Value: Aucun risk value futur configuré"
+                        "Aucun risk value futur configuré"
                       )}
                     </p>
                   </div>

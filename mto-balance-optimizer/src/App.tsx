@@ -28,7 +28,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/mto-details" element={<MTODetails />} />
+          <Route path="/mto-details/:id" element={<MTODetails />} />
           <Route path="/balance-corrections" element={<BalanceCorrections />} />
           <Route path="/risk-management" element={<RiskManagement />} />
           <Route path="/notifications" element={<Notifications />} />
@@ -38,7 +38,9 @@ const App = () => (
           <Route path="/activity-history" element={<ActivityHistory />} />
           <Route path="/transfer-rates" element={<TransferRates />} />
           <Route path="/add-mto" element={<AddMTO />} />
+          <Route path="/settings/:id" element={<Settings />} />
           <Route path="/settings" element={<Settings />} />
+
           <Route path="/account" element={<Account />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

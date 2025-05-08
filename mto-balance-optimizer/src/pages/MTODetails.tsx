@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { StatusIndicator, ValueChange } from '@/components/ui-custom/StatusIndicator';
 import { ArrowLeft, LineChart, RefreshCw, Edit, Calendar, DollarSign } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import {
   Tabs,
@@ -17,9 +17,11 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function MTODetails() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const [mtos, setMtos] = useState([]);
+  const [mto, setMto] = useState(null);  
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -29,11 +31,7 @@ export default function MTODetails() {
   };
   
   const handleEdit = () => {
-    toast({
-      title: "Mode édition",
-      description: "L'édition des MTOs sera disponible dans la prochaine mise à jour.",
-      duration: 3000,
-    });
+    navigate(`/settings/${id}`);
   };
 
   return (

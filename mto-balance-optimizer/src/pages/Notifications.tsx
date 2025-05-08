@@ -11,7 +11,8 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 
 export default function Notifications() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
+
   const { toast } = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [notificationEnableTime, setNotificationEnableTime] = useState<Date | null>(null);
@@ -116,7 +117,7 @@ export default function Notifications() {
               </p>
 
               <Button 
-                className={`${notificationsEnabled ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'} min-w-40`}
+                className={`${notificationsEnabled ? 'bg-destructive hover:bg-destructive/90' : 'bg-green-500 hover:bg-green-500/90'} min-w-40`}
                 disabled={isEnabling}
                 onClick={toggleNotifications}
               >

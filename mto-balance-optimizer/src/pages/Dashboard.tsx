@@ -89,31 +89,6 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="p-6 md:p-10 max-w-screen animate-scale-in">
-      {showProductAlert && (
-            <ProductAlert
-              blockedProducts={blockedProducts}
-              onDismiss={handleDismissAlert}
-            />
-          )}
-        {/*<div className="flex items-center justify-between mb-8">
-          <div>
-            <p className="text-muted-foreground mt-1">
-              Aperçu des soldes et opérations MTO
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="gap-2"
-              onClick={handleRefresh}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>Actualiser</span>
-            </Button>
-          </div>
-        </div>  )*/}
         <div className="flex flex-row gap-3 w-full">
 
           {/* MTO Cards Container */}
@@ -127,21 +102,28 @@ export default function Dashboard() {
         <div className="relative flex flex-col items-end gap-4 mt-6">
           {/* Always visible toggle button */}
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
             onClick={toggleNotifications}
             className="z-50  text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent"
           >
             <Bell className="h-4 w-4" />
+            {showNotifications ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
           </Button>
 
           {/* This container collapses */}
+
           <div
             className={cn(
               "transition-all duration-300 overflow-hidden mt-6",
               showNotifications ? "w-72 opacity-100" : "w-0 opacity-0"
             )}
           >
+            {showProductAlert && (
+              <ProductAlert
+                blockedProducts={blockedProducts}
+                onDismiss={handleDismissAlert}
+              />
+            )}
             <RecentActivity />
           </div>
         </div>

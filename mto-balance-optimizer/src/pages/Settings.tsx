@@ -1,12 +1,12 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Bell, Clock, FileText, Mail, Plus, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { mtoData } from '@/data/riskManagementData';
+import EditMTO from './EditMTO';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function Settings() {
   const [selectedMTOs, setSelectedMTOs] = useState<string[]>(["remitly"]);
   const [selectedMTO, setSelectedMTO] = useState<string | undefined>();
   const [isSaving, setIsSaving] = useState(false);
+  const { id } = useParams<{ id: string }>();
 
   const mtoOptions = Object.entries(mtoData).map(([id, data]) => ({
       id,
@@ -36,6 +38,22 @@ export default function Settings() {
   const handleAddMTO = () => {
     navigate("/add-mto");
   };
+
+  // Auto-select partner based on URL ID
+    useEffect(() => {
+      if (id) {
+        // Map ID to partner name
+        const partnerMap = {
+          '1': 'remitly',
+          '2': 'westernunion',
+          '3': 'moneygram',
+          '4': 'ria'
+        };
+        
+        const partnerName = partnerMap[id];
+        setSelectedMTO(partnerName);
+      }
+    }, [id]);
 
   const handleSubmitNotifForm = (e: React.FormEvent) => {
       e.preventDefault();
@@ -97,7 +115,7 @@ export default function Settings() {
         >
           <TabsList className="grid grid-cols-2 w-full max-w-md">
             {/* <TabsTrigger value="general">Général</TabsTrigger> */}
-            <TabsTrigger value="partenaires">Partenaires MTOs</TabsTrigger>
+            <TabsTrigger value="partenaires">MTOs Params</TabsTrigger>
             <TabsTrigger value="fx-rate-notifications">Fx Rate Notifications </TabsTrigger>
           </TabsList>
 
@@ -139,39 +157,21 @@ export default function Settings() {
           <TabsContent value="partenaires" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gestion des partenaires</CardTitle>
+                <CardTitle>Gestion des MTOs</CardTitle>
                 <CardDescription>
-                  Ajoutez et gérez vos partenaires MTO.
+                  <div className="flex items-center justify-between">
+                  Ajoutez ou modifiez les paramètres des MTOs.
+                  <Button onClick={handleAddMTO} className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Ajouter un MTO
+                    </Button>
+                  </div>
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-medium">Partenaires MTO</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Gérez les partenaires MTO connectés à votre système.
-                      </p>
-                    </div>
-                    <Button onClick={handleAddMTO} className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      Ajouter un partenaire MTO
-                    </Button>
-                  </div>
                   <Separator />
-                  
-                  <div className="rounded-lg border border-dashed h-40 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-muted-foreground">Aucun partenaire MTO ajouté</p>
-                      <Button 
-                        variant="outline" 
-                        className="mt-4"
-                        onClick={handleAddMTO}
-                      >
-                        Ajouter votre premier partenaire
-                      </Button>
-                    </div>
-                  </div>
+                  <EditMTO/>
                 </div>
               </CardContent>
             </Card>
@@ -191,23 +191,23 @@ export default function Settings() {
                       <div className="flex-1">
                         <h3 className="text-base font-medium">Notification Configuration</h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Configure how and when MTO partners receive their notifications.
+                          Configure how and when MTOs receive their notifications.
                         </p>
                       </div>
                     </div>
                     
                     <div className="rounded-lg border overflow-hidden">
                       <div className="bg-secondary/70 p-4 border-b border-border">
-                        <h3 className="text-sm font-medium">MTO Partners</h3>
+                        <h3 className="text-sm font-medium">MTOs</h3>
                       </div>
                       <div className="p-4 space-y-6">
                         <div className="flex items-center gap-4">
                           <Users className="h-5 w-5 text-muted-foreground mb-4" />
                           <div className="flex-1">
                             <div className="form-group">
-                              <Select value={selectedMTO} onValueChange={handleMTOSelect}>
+                              <Select value={selectedMTO} onValueChange={handleMTOSelect} defaultValue={id}>
                                 <SelectTrigger className="w-full mt-2">
-                                  <SelectValue placeholder="Select an MTO partner" />
+                                  <SelectValue placeholder="Select an MTO" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="remitly">Remitly</SelectItem>
@@ -234,7 +234,7 @@ export default function Settings() {
                             <div>
                               <span className="font-medium">Email Notifications</span>
                               <p className="text-sm text-muted-foreground mt-0.5">
-                                Send notifications via email to MTO partners
+                                Send notifications via email to MTOs
                               </p>
                             </div>
                           </div>
@@ -269,7 +269,7 @@ export default function Settings() {
                               <div>
                                 <span className="font-medium">SFTP File Transfer</span>
                                 <p className="text-sm text-muted-foreground mt-0.5">
-                                  Upload notifications to MTO's SFTP server
+                                  Upload notifications to MTOs SFTP server
                                 </p>
                               </div>
                             </div>
@@ -324,8 +324,8 @@ export default function Settings() {
                   <div className="bg-accent/50 rounded-lg p-4 border border-border">
                     <h3 className="text-sm font-medium mb-2">About Notifications</h3>
                     <p className="text-sm text-muted-foreground">
-                      Partners will receive daily notifications for the FX rates that will be applied to all transactions the following day.
-                      Only selected MTO partners will receive these notifications.
+                      MTOs will receive daily notifications for the FX rates that will be applied to all transactions the following day.
+                      Only selected MTOs will receive these notifications.
                     </p>
                   </div>
                 </div>

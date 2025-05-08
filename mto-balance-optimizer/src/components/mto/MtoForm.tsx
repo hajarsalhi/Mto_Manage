@@ -55,9 +55,10 @@ type MtoFormValues = z.infer<typeof formSchema>;
 interface MtoFormProps {
   isSubmitting?: boolean;
   onSubmit: (values: MtoFormValues) => void;
+  id?: string;
 }
 
-export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
+export function MtoForm({ isSubmitting = false, onSubmit, id }: MtoFormProps) {
   const [showFxRateEmails, setShowFxRateEmails] = useState(false);
   const [showReconciliationEmails, setShowReconciliationEmails] = useState(false);
   
@@ -77,6 +78,24 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
       reconciliationEmails: "",
     },
   });
+
+  // Auto-select partner based on URL ID
+  useEffect(() => {
+    if (id) {
+      // Map ID to partner name
+      const partnerMap = {
+        '1': 'remitly',
+        '2': 'westernunion',
+        '3': 'moneygram',
+        '4': 'ria'
+      };
+      
+      const partnerName = partnerMap[id];
+      if (partnerName) {
+        form.setValue('name', partnerName);
+      }
+    }
+  }, [id, form]);
 
   const watchSendMethod = form.watch("sendMethod");
   const watchIsFxRateEnabled = form.watch("isFxRateEnabled");
@@ -109,14 +128,14 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
                 <FormItem>
                   <FormLabel>Nom du partenaire</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="mto" className="w-full mt-2">
+                      <SelectTrigger id ="mto" className="w-full mt-2" defaultValue={id}>
                         <SelectValue placeholder="Select an MTO partner" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="remitly">Remitly</SelectItem>
-                        <SelectItem value="westernunion">Western Union</SelectItem>
-                        <SelectItem value="moneygram">MoneyGram</SelectItem>
-                        <SelectItem value="ria">Ria Money Transfer</SelectItem>
+                        <SelectItem id="1" value="remitly">Remitly</SelectItem>
+                        <SelectItem id="2" value="westernunion">Western Union</SelectItem>
+                        <SelectItem id="3" value="moneygram">MoneyGram</SelectItem>
+                        <SelectItem id="4" value="ria">Ria Money Transfer</SelectItem>
                       </SelectContent>
                     </Select>
                 </FormItem>
