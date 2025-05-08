@@ -108,10 +108,17 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nom du partenaire</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex: Remitly" {...field} />
-                  </FormControl>
-                  <FormMessage />
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="mto" className="w-full mt-2">
+                        <SelectValue placeholder="Select an MTO partner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="remitly">Remitly</SelectItem>
+                        <SelectItem value="westernunion">Western Union</SelectItem>
+                        <SelectItem value="moneygram">MoneyGram</SelectItem>
+                        <SelectItem value="ria">Ria Money Transfer</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </FormItem>
               )}
             />
@@ -134,7 +141,6 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
                     <SelectContent>
                       <SelectItem value="EUR">EUR</SelectItem>
                       <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
                       <SelectItem value="MAD">MAD</SelectItem>
                     </SelectContent>
                   </Select>
@@ -143,24 +149,6 @@ export function MtoForm({ isSubmitting = false, onSubmit }: MtoFormProps) {
               )}
             />
           </div>
-          
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Informations complémentaires sur le partenaire..."
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
         
         <div className="space-y-6">

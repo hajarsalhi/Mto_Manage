@@ -17,7 +17,7 @@ import ActivityHistory from "./pages/ActivityHistory";
 import TransferRates from "./pages/TransferRates";
 import AddMTO from "./pages/AddMTO";
 import Settings from "./pages/Settings";
-
+import Account from "./pages/Account";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -39,6 +39,7 @@ const App = () => (
           <Route path="/transfer-rates" element={<TransferRates />} />
           <Route path="/add-mto" element={<AddMTO />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/account" element={<Account />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

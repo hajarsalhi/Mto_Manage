@@ -215,7 +215,7 @@ export default function CompensationUpload() {
             </p>
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 pt-10">
             <CardHeader>
               <CardTitle>Importer un fichier de compensation</CardTitle>
             </CardHeader>

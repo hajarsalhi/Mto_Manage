@@ -1,35 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui-custom/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui-custom/Card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from '@/components/ui/switch';
-import { Bell, Clock, Mail, FileText, Users, RefreshCw, X, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, X, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { mtoData } from '@/data/riskManagementData';
 import { format } from 'date-fns';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 
 export default function Notifications() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [emailEnabled, setEmailEnabled] = useState(true);
-  const [sftpEnabled, setSftpEnabled] = useState(false);
-  const [notificationTime, setNotificationTime] = useState("16:00");
-  const [emailRecipients, setEmailRecipients] = useState("finance@mto.com, operations@mto.com");
-  const [selectedMTOs, setSelectedMTOs] = useState<string[]>(["remitly"]);
-  const [selectedMTO, setSelectedMTO] = useState<string | undefined>("remitly");
+  
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [notificationEnableTime, setNotificationEnableTime] = useState<Date | null>(null);
   const [notificationEnableUser, setNotificationEnableUser] = useState("Admin User");
@@ -39,11 +22,7 @@ export default function Notifications() {
     { currency: "EUR", rate: 10.3792, updatedAt: new Date(Date.now() - 8000), source: "Cash Plus" },
   ]);
   
-  const mtoOptions = Object.entries(mtoData).map(([id, data]) => ({
-    id,
-    name: data.name
-  }));
-
+  
   useEffect(() => {
     const now = new Date();
     setCurrentRates(prev => prev.map((rate, index) => ({
@@ -52,49 +31,7 @@ export default function Notifications() {
     })));
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!emailEnabled && !sftpEnabled) {
-      toast({
-        title: "Error",
-        description: "At least one notification method must be enabled.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-    
-    if (selectedMTOs.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please select at least one MTO partner for notifications.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-    
-    setIsSaving(true);
-    
-    setTimeout(() => {
-      setIsSaving(false);
-      
-      toast({
-        title: "Settings saved",
-        description: "Notification settings have been updated successfully.",
-        duration: 3000,
-      });
-    }, 1500);
-  };
-
-  const handleMTOSelect = (mtoId: string) => {
-    setSelectedMTO(mtoId);
-    
-    if (!selectedMTOs.includes(mtoId)) {
-      setSelectedMTOs(prev => [...prev, mtoId]);
-    }
-  };
+  
 
   const toggleNotifications = () => {
     setIsEnabling(true);
@@ -230,175 +167,7 @@ export default function Notifications() {
             </CardContent>
           </Card>
           
-          <Card>
-            <form onSubmit={handleSubmit}>
-              <CardHeader>
-                <CardTitle>Notification Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  <div className="space-y-6">
-                    <div className="flex items-start space-x-4">
-                      <Bell className="h-6 w-6 text-muted-foreground mt-1" />
-                      <div className="flex-1">
-                        <h3 className="text-base font-medium">Notification Configuration</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Configure how and when MTO partners receive their notifications.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="rounded-lg border overflow-hidden">
-                      <div className="bg-secondary/70 p-4 border-b border-border">
-                        <h3 className="text-sm font-medium">MTO Partners</h3>
-                      </div>
-                      
-                      <div className="p-4 space-y-4">
-                        <div className="flex items-center gap-3">
-                          <Users className="h-5 w-5 text-muted-foreground" />
-                          <div className="flex-1">
-                            <div className="form-group">
-                              <Label htmlFor="mto-select">Select MTO Partner</Label>
-                              <Select value={selectedMTO} onValueChange={handleMTOSelect}>
-                                <SelectTrigger id="mto-select" className="w-full mt-2">
-                                  <SelectValue placeholder="Sélectionner un partenaire MTO" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {mtoOptions.map(mto => (
-                                    <SelectItem key={mto.id} value={mto.id}>
-                                      {mto.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="rounded-lg border overflow-hidden">
-                      <div className="bg-secondary/70 p-4 border-b border-border">
-                        <h3 className="text-sm font-medium">Notification Methods</h3>
-                      </div>
-                      
-                      <div className="p-4 space-y-4">
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center gap-3">
-                            <Mail className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                              <span className="font-medium">Email Notifications</span>
-                              <p className="text-sm text-muted-foreground mt-0.5">
-                                Send notifications via email to MTO partners
-                              </p>
-                            </div>
-                          </div>
-                          <Switch
-                            checked={emailEnabled}
-                            onCheckedChange={setEmailEnabled}
-                          />
-                        </div>
-                        
-                        {emailEnabled && (
-                          <div className="ml-8 mt-2 mb-1">
-                            <div className="form-group">
-                              <Label htmlFor="emailRecipients">Email Recipients</Label>
-                              <Input
-                                id="emailRecipients"
-                                value={emailRecipients}
-                                onChange={(e) => setEmailRecipients(e.target.value)}
-                                className="mt-2"
-                                placeholder="e.g. finance@mto.com, operations@mto.com"
-                              />
-                              <p className="text-xs text-muted-foreground mt-1.5">
-                                Separate multiple email addresses with commas
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                        
-                        <div className="border-t border-border pt-4">
-                          <div className="flex items-center justify-between py-2">
-                            <div className="flex items-center gap-3">
-                              <FileText className="h-5 w-5 text-muted-foreground" />
-                              <div>
-                                <span className="font-medium">SFTP File Transfer</span>
-                                <p className="text-sm text-muted-foreground mt-0.5">
-                                  Upload notifications to MTO's SFTP server
-                                </p>
-                              </div>
-                            </div>
-                            <Switch
-                              checked={sftpEnabled}
-                              onCheckedChange={setSftpEnabled}
-                            />
-                          </div>
-                          
-                          {sftpEnabled && (
-                            <div className="ml-8 mt-2 mb-1">
-                              <div className="bg-secondary/40 rounded-md p-3 text-sm">
-                                <p>SFTP configuration is managed by system administrators. Contact IT support to set up or modify SFTP connections.</p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="rounded-lg border overflow-hidden">
-                      <div className="bg-secondary/70 p-4 border-b border-border">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-medium">Notification Timing</h3>
-                          <Badge variant="outline" className="text-xs">Daily</Badge>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4 space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Clock className="h-5 w-5 text-muted-foreground mt-1" />
-                          <div className="flex-1">
-                            <div className="form-group">
-                              <Label htmlFor="notificationTime">Notification Time</Label>
-                              <input
-                                type="time"
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                                value={notificationTime}
-                                onChange={(e) => setNotificationTime(e.target.value)}
-                                required
-                              />
-                              <p className="text-xs text-muted-foreground mt-1.5">
-                                Notifications will be sent daily at this time
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-accent/50 rounded-lg p-4 border border-border">
-                    <h3 className="text-sm font-medium mb-2">About Notifications</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Partners will receive daily notifications for the FX rates that will be applied to all transactions the following day.
-                      Only selected MTO partners will receive these notifications.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="justify-end space-x-2 border-t pt-6">
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isSaving}
-                  className="bg-primary/90 hover:bg-primary text-primary-foreground"
-                >
-                  {isSaving ? "Saving..." : "Save Settings"}
-                </Button>
-              </CardFooter>
-            </form>
-          </Card>
+          
         </div>
       </main>
       

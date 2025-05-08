@@ -25,7 +25,7 @@ export default function AddMTO() {
         duration: 5000,
       });
       
-      navigate('/');
+      navigate('/settings');
     }, 1500);
   };
 
@@ -36,10 +36,10 @@ export default function AddMTO() {
           variant="ghost" 
           size="sm" 
           className="mb-6" 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/settings')}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour au dashboard
+          Retour au Settings
         </Button>
         
         <div className="flex items-center justify-between mb-6">

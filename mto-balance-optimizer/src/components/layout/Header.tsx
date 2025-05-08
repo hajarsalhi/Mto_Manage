@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Bell, Sun, Moon, Menu, Euro, DollarSign, Link, ArrowLeft } from 'lucide-react';
+import { Bell, Sun, Moon, Menu, Euro, DollarSign, ArrowLeft, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -78,6 +78,10 @@ export function Header({ toggleSidebar }: HeaderProps) {
       description: `Interface switched to ${newMode ? 'dark' : 'light'} mode.`,
       duration: 2000,
     });
+  };
+
+  const logout = () => {
+    
   };
 
   const formatUpdateTime = (date: Date) => {
@@ -159,14 +163,24 @@ export function Header({ toggleSidebar }: HeaderProps) {
           className="text-muted-foreground hover:text-foreground transition-colors relative"
           onClick={() => {
             toast({
-              title: "No new notifications",
-              description: "You're all caught up!",
+              title: "Blocked Partners",
+              description: "You have 2 blocked partners!",
               duration: 3000,
             });
           }}
         >
           <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-finance-warning rounded-full"></span>
+          <span className="absolute top-1 right-1 w-2 h-2 bg-finance-negative rounded-full"></span>
+        </Button>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-muted-foreground hover:text-foreground transition-colors relative"
+          onClick={() => {
+            logout();
+          }}
+        >
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>

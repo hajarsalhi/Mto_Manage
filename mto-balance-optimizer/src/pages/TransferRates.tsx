@@ -65,7 +65,7 @@ export default function TransferRates() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative">
+    <div className="min-h-screen bg-background text-foreground relative pt-10">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       

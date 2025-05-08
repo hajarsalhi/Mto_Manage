@@ -274,9 +274,9 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
               className="pl-9"
             />
           </div>
-          <Button variant="outline" size="icon" onClick={handleFilterClick}>
+          {/* <Button variant="outline" size="icon" onClick={handleFilterClick}>
             <SlidersHorizontal className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </div>
       </div>
 

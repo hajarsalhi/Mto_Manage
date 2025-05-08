@@ -9,7 +9,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Upload,
-  Banknote
+  Banknote,
+  User
 } from 'lucide-react';
 import logo from '@/assets/images/LogoCP.png';
 import { cn } from '@/lib/utils';
@@ -155,14 +156,20 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               label="Reference Rate" 
               isCollapsed={isCollapsed} 
             />
+            <SidebarLink 
+              to="/settings" 
+              icon={Settings} 
+              label="Settings" 
+              isCollapsed={isCollapsed} 
+            />
           </div>
         </nav>
         
         <div className={cn("p-4 border-t border-sidebar-border", isCollapsed && "px-3")}>
           <SidebarLink 
-            to="/settings" 
-            icon={Settings} 
-            label="Settings" 
+            to="/account" 
+            icon={User} 
+            label="Account" 
             isCollapsed={isCollapsed} 
           />
         </div>
