@@ -209,20 +209,20 @@ export default function CompensationUpload() {
       >
         <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto animate-scale-in">
           <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-semibold">Import de Compensation</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Import de Compensations</h1>
             <p className="text-muted-foreground mt-1">
-              Téléchargez les fichiers de compensation des partenaires MTO
+              Téléchargez les fichiers de compensation des MTOs
             </p>
           </div>
           
           <Card className="mb-8 pt-10">
             <CardHeader>
-              <CardTitle>Importer un fichier de compensation</CardTitle>
+              <CardTitle>Importer un fichier de compensations</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4 md:space-y-6">
                 <div className="space-y-3 md:space-y-4">
-                  <Label htmlFor="file">Fichier de compensation</Label>
+                  <Label htmlFor="file">Fichier de compensations</Label>
                   <div 
                     className={`border-2 border-dashed rounded-lg p-4 md:p-6 text-center hover:bg-secondary/50 transition-colors cursor-pointer ${
                       uploadStatus === 'error' ? 'border-finance-negative bg-finance-negative/10' : 
@@ -339,7 +339,7 @@ export default function CompensationUpload() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer la validation</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Vous êtes sur le point de valider ce fichier de compensation. Cette action appliquera les transactions à la balance du partenaire.
+                              Vous êtes sur le point de valider ce fichier de compensation. Cette action appliquera les transactions à la balance du MTO.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

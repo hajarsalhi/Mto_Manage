@@ -16,7 +16,7 @@ export function ProductAlert({ blockedProducts, onDismiss }: ProductAlertProps) 
     <div className={styles.alert}>
       <div className={styles.alertTitle}>
         <AlertTriangle className={styles.alertIcon} />
-        <h3>Produits bloqués</h3>
+        <h3>MTOs bloqués</h3>
       </div>
       <div className={styles.alertDescription}>
         {blockedProducts.map((product, index) => (

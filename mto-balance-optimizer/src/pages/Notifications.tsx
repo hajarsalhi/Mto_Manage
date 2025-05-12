@@ -84,7 +84,7 @@ export default function Notifications() {
               </Badge>
             </div>
             <p className="text-muted-foreground">
-              Configure and manage notifications for MTO partners
+              Configure and manage notifications for MTOs
             </p>
           </div>
           
@@ -113,7 +113,7 @@ export default function Notifications() {
             </CardHeader>
             <CardContent className="pb-4">
               <p className="text-sm text-muted-foreground mb-6">
-                Enable or disable notifications for all MTO partners. When enabled, partners will receive FX rate notifications based on the schedule below.
+                Enable or disable notifications for all MTOs. When enabled, MTOs will receive FX rate notifications based on the schedule below.
               </p>
 
               <Button 

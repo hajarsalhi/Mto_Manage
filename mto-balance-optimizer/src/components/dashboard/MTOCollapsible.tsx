@@ -108,7 +108,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
       
       return {
         id: index + 1,
-        name: `Partner MTO ${index + 1}`,
+        name: `MTO ${index + 1}`,
         currency: ['USD', 'EUR', 'GBP'][Math.floor(Math.random() * 3)],
         balance: balance,
         riskValue: riskValue,
@@ -268,7 +268,7 @@ export function MTOCollapsible({ showCriticalFirst = false }: MTOCollapsibleProp
           <div className="relative flex-1 sm:flex-none sm:min-w-[300px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher un partenaire..."
+              placeholder="Rechercher un MTO..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"

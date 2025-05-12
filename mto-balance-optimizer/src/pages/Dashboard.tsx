@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(true);
   const [showProductAlert, setShowProductAlert] = useState(true);
-  const [blockedProducts, setBlockedProducts] = useState<Array<{ id: string; name: string; blockedSince: string }>>([ { id: '1', name: 'Partner 1', blockedSince: '2023-01-01' }, { id: '2', name: 'Partner 2', blockedSince: '2023-01-02' }]);
+  const [blockedProducts, setBlockedProducts] = useState<Array<{ id: string; name: string; blockedSince: string }>>([ { id: '1', name: 'MTO 1', blockedSince: '2023-01-01' }, { id: '2', name: 'MTO 2', blockedSince: '2023-01-02' }]);
   const { toast } = useToast();
   
   const toggleNotifications = () => {
@@ -92,41 +92,45 @@ export default function Dashboard() {
         <div className="flex flex-row gap-3 w-full">
 
           {/* MTO Cards Container */}
-          <div className={`flex gap-2 transition-all duration-300 ${showNotifications ? 'w-full max-w-2/3' : 'max-w-full'}`}>
+          <div className={`flex-1 transition-all duration-300 ${showNotifications ? 'max-w-2/3' : 'max-w-full'}`}>
             <div className="grid grid-cols-1 gap-6">
               <MTOCollapsible showCriticalFirst={true} />
             </div>
           </div>
 
           {/* Notifications Panel */}
-        <div className="relative flex flex-col items-end gap-4 mt-6">
+          <div className="relative flex flex-col items-end gap-4 mt-6">
           {/* Always visible toggle button */}
-          <Button
-            variant="outline"
-            onClick={toggleNotifications}
-            className="z-50  text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent"
-          >
-            <Bell className="h-4 w-4" />
-            {showNotifications ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
-          </Button>
+            <Button
+              variant="outline"
+              onClick={toggleNotifications}
+              className="z-50  text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent"
+            >
+              <Bell className="h-4 w-4" />
+              {showNotifications ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+            </Button>
 
           {/* This container collapses */}
 
-          <div
-            className={cn(
-              "transition-all duration-300 overflow-hidden mt-6",
-              showNotifications ? "w-72 opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            {showProductAlert && (
-              <ProductAlert
-                blockedProducts={blockedProducts}
-                onDismiss={handleDismissAlert}
-              />
-            )}
-            <RecentActivity />
+            <div
+              className={cn(
+                "transition-all duration-300 overflow-hidden mt-6",
+                showNotifications ? "w-72 opacity-100" : "w-0 opacity-0"
+              )}
+              style={{
+                minWidth: showNotifications ? '18rem' : '0',
+                maxWidth: showNotifications ? '18rem' : '0'
+              }}
+            >
+              {showProductAlert && (
+                <ProductAlert
+                  blockedProducts={blockedProducts}
+                  onDismiss={handleDismissAlert}
+                />
+              )}
+              <RecentActivity />
+            </div>
           </div>
-        </div>
 
         </div>
       </div>

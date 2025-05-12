@@ -132,7 +132,7 @@ export default function BalanceCorrections() {
                     <Label htmlFor="mto">MTO Partner</Label>
                     <Select value={mto} onValueChange={handleMtoChange}>
                       <SelectTrigger id="mto" className="w-full mt-2">
-                        <SelectValue placeholder="Select an MTO partner" />
+                        <SelectValue placeholder="Select an MTO" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="remitly">Remitly</SelectItem>

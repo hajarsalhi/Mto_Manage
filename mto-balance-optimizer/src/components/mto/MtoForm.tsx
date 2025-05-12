@@ -34,7 +34,7 @@ import { CalendarClock, Info } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Le nom du partenaire doit contenir au moins 2 caractères.",
+    message: "Veuillez choisir un MTO",
   }),
   description: z.string().optional(),
   commission: z.coerce.number().min(0).max(100),
@@ -129,7 +129,7 @@ export function MtoForm({ isSubmitting = false, onSubmit, id }: MtoFormProps) {
                   <FormLabel>Nom du partenaire</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger id ="mto" className="w-full mt-2" defaultValue={id}>
-                        <SelectValue placeholder="Select an MTO partner" />
+                        <SelectValue placeholder="Select an MTO" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem id="1" value="remitly">Remitly</SelectItem>
@@ -374,7 +374,7 @@ export function MtoForm({ isSubmitting = false, onSubmit, id }: MtoFormProps) {
             Annuler
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Création en cours..." : "Créer le partenaire"}
+            {isSubmitting ? "Modification en cours..." : "Modifier le MTO"}
           </Button>
         </div>
       </form>

@@ -12,7 +12,19 @@ export default function EditMTO() {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { id } = useParams<{ id: string }>();
-
+    const [data, setData] = useState({
+        name: "Western Union",
+        description: "",
+        commission: 0,
+        currency: "",
+        decote: 0,
+        sendMethod: "none",
+        sendTime: "",
+        isFxRateEnabled: false,
+        fxRateEmails: "",
+        isReconciliationEnabled: false,
+        reconciliationEmails: "",
+      });
     const handleSubmit = (data: any) => {
         setIsSubmitting(true);
         
@@ -36,7 +48,7 @@ export default function EditMTO() {
     return (
             <div className="container">
                 <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl font-bold">Modifier le MTO {id}</h1>
+                    <h3 className="text-2xl font-normal">Modifier les paramètres du MTO {data.name}</h3>
                 </div>
                 <div className="bg-card border rounded-lg shadow-sm">
                     <MtoForm 
